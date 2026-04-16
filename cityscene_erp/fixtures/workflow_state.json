@@ -25,5 +25,59 @@
   "name": "Rejected",
   "style": "Danger",
   "workflow_state_name": "Rejected"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-04-16 12:25:45.146903",
+  "name": "New",
+  "style": "",
+  "workflow_state_name": "New"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-04-16 12:26:26.345086",
+  "name": "UnQualified",
+  "style": "",
+  "workflow_state_name": "UnQualified"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-04-16 12:26:51.365258",
+  "name": "Qualified",
+  "style": "",
+  "workflow_state_name": "Qualified"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-04-16 12:27:11.129944",
+  "name": "Site Survey",
+  "style": "",
+  "workflow_state_name": "Site Survey"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-04-16 12:27:36.846536",
+  "name": "Engineering Design",
+  "style": "",
+  "workflow_state_name": "Engineering Design"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-04-16 12:27:56.361986",
+  "name": "Quotation",
+  "style": "",
+  "workflow_state_name": "Quotation"
  }
 ]

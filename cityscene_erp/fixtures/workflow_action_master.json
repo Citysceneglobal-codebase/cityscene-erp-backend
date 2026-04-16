@@ -19,5 +19,47 @@
   "modified": "2026-04-16 00:24:53.735961",
   "name": "Review",
   "workflow_action_name": "Review"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2026-04-16 12:28:42.405150",
+  "name": "UnQualify",
+  "workflow_action_name": "UnQualify"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2026-04-16 12:29:25.888650",
+  "name": "Qualify",
+  "workflow_action_name": "Qualify"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2026-04-16 12:30:17.714561",
+  "name": "Assign Survey",
+  "workflow_action_name": "Assign Survey"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2026-04-16 12:31:28.865495",
+  "name": "Survey Approved",
+  "workflow_action_name": "Survey Approved"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2026-04-16 12:32:34.772473",
+  "name": "Design Approved",
+  "workflow_action_name": "Design Approved"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2026-04-16 12:33:06.808788",
+  "name": "Direct To Quotation",
+  "workflow_action_name": "Direct To Quotation"
  }
 ]
