@@ -253,3 +253,29 @@ require_type_annotated_api_methods = True
 # List of apps whose translatable strings should be excluded from this app's translations.
 # ignore_translatable_strings_from = []
 
+# Custom Fixtures for SRB Power
+# -----------------------------
+fixtures = [
+    # 1. Customizations to Standard DocTypes (like Lead or Customer)
+    "Custom Field",
+    "Property Setter",
+    "Custom DocPerm", 
+    
+    # 2. Workflows
+    "Workflow",
+    "Workflow State",
+    "Workflow Action Master",
+    
+    # 3. Roles and Profiles
+    "Role",
+    "Role Profile",
+    
+    # 4. Automation & Logic
+    "Assignment Rule",
+    "Notification",
+    "Server Script",
+    "Client Script",
+    
+    # 5. UI/Layouts
+    "Workspace"
+]
