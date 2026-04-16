@@ -674,5 +674,57 @@
   "restrict_to_domain": null,
   "role_name": "Employee Self Service",
   "two_factor_auth": 0
+ },
+ {
+  "desk_access": 1,
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Role",
+  "home_page": null,
+  "is_custom": 0,
+  "modified": "2026-04-16 11:49:01.098439",
+  "name": "SRB Sales Manager",
+  "restrict_to_domain": null,
+  "role_name": "SRB Sales Manager",
+  "two_factor_auth": 0
+ },
+ {
+  "desk_access": 1,
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Role",
+  "home_page": null,
+  "is_custom": 0,
+  "modified": "2026-04-16 11:49:47.923125",
+  "name": "SRB Sales Executive",
+  "restrict_to_domain": null,
+  "role_name": "SRB Sales Executive",
+  "two_factor_auth": 0
+ },
+ {
+  "desk_access": 1,
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Role",
+  "home_page": null,
+  "is_custom": 0,
+  "modified": "2026-04-16 11:50:00.727311",
+  "name": "SRB Site Engineer",
+  "restrict_to_domain": null,
+  "role_name": "SRB Site Engineer",
+  "two_factor_auth": 0
+ },
+ {
+  "desk_access": 1,
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Role",
+  "home_page": null,
+  "is_custom": 0,
+  "modified": "2026-04-16 11:50:13.175643",
+  "name": "SRB Engineering Designer",
+  "restrict_to_domain": null,
+  "role_name": "SRB Engineering Designer",
+  "two_factor_auth": 0
  }
 ]

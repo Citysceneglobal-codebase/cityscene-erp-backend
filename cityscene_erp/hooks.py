@@ -279,3 +279,14 @@ fixtures = [
     # 5. UI/Layouts
     "Workspace"
 ]
+
+# Global Branding Overrides
+# -------------------------
+custom_translations = {
+    "en": {
+        "Login to Frappe": "Login to SRB Power ERP",
+        "Frappe": "SRB Power",
+        "Frappe Framework": "Cityscene Framework",
+        "ERPNext": "SRB Power ERP"
+    }
+}
