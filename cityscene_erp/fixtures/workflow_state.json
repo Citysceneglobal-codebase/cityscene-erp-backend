@@ -39,15 +39,6 @@
   "docstatus": 0,
   "doctype": "Workflow State",
   "icon": "",
-  "modified": "2026-04-16 12:26:26.345086",
-  "name": "UnQualified",
-  "style": "",
-  "workflow_state_name": "UnQualified"
- },
- {
-  "docstatus": 0,
-  "doctype": "Workflow State",
-  "icon": "",
   "modified": "2026-04-16 12:26:51.365258",
   "name": "Qualified",
   "style": "",
@@ -79,5 +70,14 @@
   "name": "Quotation",
   "style": "",
   "workflow_state_name": "Quotation"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-04-16 12:26:26.345086",
+  "name": "UnQualified",
+  "style": "",
+  "workflow_state_name": "UnQualified"
  }
 ]

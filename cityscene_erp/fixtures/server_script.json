@@ -1,1 +1,21 @@
-[]
+[
+ {
+  "allow_guest": 0,
+  "api_method": null,
+  "cron_format": null,
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Server Script",
+  "doctype_event": "Before Save",
+  "enable_rate_limit": 0,
+  "event_frequency": "All",
+  "modified": "2026-04-16 13:01:47.594669",
+  "module": null,
+  "name": "Auto Assign Lead to Manager",
+  "rate_limit_count": 5,
+  "rate_limit_seconds": 86400,
+  "reference_doctype": "Lead",
+  "script": "# Only run this logic if the Lead has just been moved to the \"Qualified\" state\nif doc.workflow_state == \"Qualified\":\n    \n    # Check if a manager is already assigned. If so, don't overwrite it.\n    manager_assigned = frappe.db.exists(\"ToDo\", {\n        \"reference_type\": \"Lead\",\n        \"reference_name\": doc.name,\n        \"status\": \"Open\",\n        \"role\": \"SRB Sales Manager\" # We check against the role, not a specific person\n    })\n\n    if not manager_assigned:\n        # 1. Find the primary Sales Manager in the system (or a specific one if you prefer)\n        # For this example, we'll just grab the first active user with the Sales Manager role.\n        manager_email = frappe.db.get_value(\"Has Role\", \n            {\"role\": \"SRB Sales Manager\", \"parenttype\": \"User\"}, \n            \"parent\"\n        )\n        \n        if manager_email:\n            # 2. Use Frappe's built-in assignment tool to officially assign the document\n            # This automatically sends an email/notification and adds it to their ToDo list.\n            from frappe.desk.form.assign_to import add as assign_to\n            \n            assign_to({\n                \"assign_to\": [manager_email],\n                \"doctype\": \"Lead\",\n                \"name\": doc.name,\n                \"description\": f\"New Qualified Lead awaiting Site Engineer assignment: {doc.lead_name}\"\n            })\n            \n            # Note: We don't need to save the 'doc' here because this is a 'Before Save' event.\n            # Frappe will handle the final save automatically.",
+  "script_type": "DocType Event"
+ }
+]
