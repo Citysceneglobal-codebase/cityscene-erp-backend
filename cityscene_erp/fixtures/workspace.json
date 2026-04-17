@@ -8519,7 +8519,7 @@
     "type": "Link"
    }
   ],
-  "modified": "2024-09-30 17:39:36.060170",
+  "modified": "2026-04-17 11:36:36.077389",
   "module": "Core",
   "name": "Build",
   "number_cards": [],
@@ -8527,7 +8527,11 @@
   "public": 1,
   "quick_lists": [],
   "restrict_to_domain": "",
-  "roles": [],
+  "roles": [
+   {
+    "role": "Script Manager"
+   }
+  ],
   "sequence_id": 1.0,
   "shortcuts": [
    {
