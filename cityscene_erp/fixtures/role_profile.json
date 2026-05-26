@@ -2,6 +2,51 @@
  {
   "docstatus": 0,
   "doctype": "Role Profile",
+  "modified": "2026-05-21 14:56:34.618343",
+  "name": "Business Development",
+  "role_profile": "Business Development",
+  "roles": [
+   {
+    "role": "Employee"
+   },
+   {
+    "role": "Employee Self Service"
+   },
+   {
+    "role": "Inbox User"
+   },
+   {
+    "role": "Marketing Manager"
+   },
+   {
+    "role": "Projects User"
+   },
+   {
+    "role": "Sales Manager"
+   },
+   {
+    "role": "Sales User"
+   },
+   {
+    "role": "SRB Engineering Designer"
+   },
+   {
+    "role": "SRB Sales Executive"
+   },
+   {
+    "role": "SRB Sales Manager"
+   },
+   {
+    "role": "SRB Site Engineer"
+   },
+   {
+    "role": "Stock User"
+   }
+  ]
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Role Profile",
   "modified": "2026-04-16 00:26:32.840357",
   "name": "Inventory",
   "role_profile": "Inventory",

@@ -30,15 +30,6 @@
   "docstatus": 0,
   "doctype": "Workflow State",
   "icon": "",
-  "modified": "2026-04-16 12:25:45.146903",
-  "name": "New",
-  "style": "",
-  "workflow_state_name": "New"
- },
- {
-  "docstatus": 0,
-  "doctype": "Workflow State",
-  "icon": "",
   "modified": "2026-04-16 12:27:11.129944",
   "name": "Site Survey",
   "style": "",
@@ -79,5 +70,14 @@
   "name": "Qualified",
   "style": "",
   "workflow_state_name": "Qualified"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-04-16 12:25:45.146903",
+  "name": "New",
+  "style": "",
+  "workflow_state_name": "New"
  }
 ]

@@ -761,7 +761,7 @@
     "label": "Sales Order Trends"
    }
   ],
-  "content": "[{\"id\":\"vBSf8Vi9U8\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Sales Order Trends\",\"col\":12}},{\"id\":\"aW2i5R5GRP\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"43fzlS1qZg\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Sales Orders\",\"col\":4}},{\"id\":\"jhtxl-XOGi\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Sales Amount\",\"col\":4}},{\"id\":\"0Ioq-P11FP\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Average Order Value\",\"col\":4}},{\"id\":\"0BcePLg0g1\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Reports &amp; Masters</b></span>\",\"col\":12}},{\"id\":\"uze5dJ1ipL\",\"type\":\"card\",\"data\":{\"card_name\":\"Selling\",\"col\":4}},{\"id\":\"3j2fYwMAkq\",\"type\":\"card\",\"data\":{\"card_name\":\"Point of Sale\",\"col\":4}},{\"id\":\"xImm8NepFt\",\"type\":\"card\",\"data\":{\"card_name\":\"Items and Pricing\",\"col\":4}},{\"id\":\"6MjIe7KCQo\",\"type\":\"card\",\"data\":{\"card_name\":\"Settings\",\"col\":4}},{\"id\":\"lBu2EKgmJF\",\"type\":\"card\",\"data\":{\"card_name\":\"Key Reports\",\"col\":4}},{\"id\":\"1ARHrjg4kI\",\"type\":\"card\",\"data\":{\"card_name\":\"Other Reports\",\"col\":4}}]",
+  "content": "[{\"id\":\"vBSf8Vi9U8\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Sales Order Trends\",\"col\":12}},{\"id\":\"aW2i5R5GRP\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"43fzlS1qZg\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Sales Orders\",\"col\":4}},{\"id\":\"jhtxl-XOGi\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Sales Amount\",\"col\":4}},{\"id\":\"0Ioq-P11FP\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Average Order Value\",\"col\":4}},{\"id\":\"Kl2SBf5W-M\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Custmer Ledger\",\"col\":3}},{\"id\":\"0BcePLg0g1\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Reports &amp; Masters</b></span>\",\"col\":12}},{\"id\":\"uze5dJ1ipL\",\"type\":\"card\",\"data\":{\"card_name\":\"Selling\",\"col\":4}},{\"id\":\"3j2fYwMAkq\",\"type\":\"card\",\"data\":{\"card_name\":\"Point of Sale\",\"col\":4}},{\"id\":\"xImm8NepFt\",\"type\":\"card\",\"data\":{\"card_name\":\"Items and Pricing\",\"col\":4}},{\"id\":\"6MjIe7KCQo\",\"type\":\"card\",\"data\":{\"card_name\":\"Settings\",\"col\":4}},{\"id\":\"lBu2EKgmJF\",\"type\":\"card\",\"data\":{\"card_name\":\"Key Reports\",\"col\":4}},{\"id\":\"1ARHrjg4kI\",\"type\":\"card\",\"data\":{\"card_name\":\"Other Reports\",\"col\":4}}]",
   "custom_blocks": [],
   "docstatus": 0,
   "doctype": "Workspace",
@@ -1631,7 +1631,7 @@
     "type": "Link"
    }
   ],
-  "modified": "2026-02-19 13:01:26.893303",
+  "modified": "2026-05-25 12:48:22.949702",
   "module": "Selling",
   "name": "Selling",
   "number_cards": [
@@ -1654,7 +1654,22 @@
   "restrict_to_domain": "",
   "roles": [],
   "sequence_id": 6.0,
-  "shortcuts": [],
+  "shortcuts": [
+   {
+    "color": "Grey",
+    "doc_view": "List",
+    "format": null,
+    "icon": null,
+    "kanban_board": null,
+    "label": "Custmer Ledger",
+    "link_to": "customer-ledger",
+    "report_ref_doctype": null,
+    "restrict_to_domain": null,
+    "stats_filter": null,
+    "type": "Page",
+    "url": null
+   }
+  ],
   "title": "Selling",
   "type": "Workspace"
  },
@@ -1666,7 +1681,7 @@
     "label": "Purchase Order Trends"
    }
   ],
-  "content": "[{\"id\":\"j3dJGo8Ok6\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Purchase Order Trends\",\"col\":12}},{\"id\":\"k75jSq2D6Z\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Purchase Orders Count\",\"col\":4}},{\"id\":\"UPXys0lQLj\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Purchase Amount\",\"col\":4}},{\"id\":\"yQGK3eb2hg\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Average Order Values\",\"col\":4}},{\"id\":\"oN7lXSwQji\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"Xe2GVLOq8J\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Reports &amp; Masters</b></span>\",\"col\":12}},{\"id\":\"QwqyG6XuUt\",\"type\":\"card\",\"data\":{\"card_name\":\"Buying\",\"col\":4}},{\"id\":\"bTPjOxC_N_\",\"type\":\"card\",\"data\":{\"card_name\":\"Items & Pricing\",\"col\":4}},{\"id\":\"87ht0HIneb\",\"type\":\"card\",\"data\":{\"card_name\":\"Settings\",\"col\":4}},{\"id\":\"EDOsBOmwgw\",\"type\":\"card\",\"data\":{\"card_name\":\"Supplier\",\"col\":4}},{\"id\":\"oWNNIiNb2i\",\"type\":\"card\",\"data\":{\"card_name\":\"Supplier Scorecard\",\"col\":4}},{\"id\":\"7F_13-ihHB\",\"type\":\"card\",\"data\":{\"card_name\":\"Key Reports\",\"col\":4}},{\"id\":\"pfwiLvionl\",\"type\":\"card\",\"data\":{\"card_name\":\"Other Reports\",\"col\":4}},{\"id\":\"8ySDy6s4qn\",\"type\":\"card\",\"data\":{\"card_name\":\"Regional\",\"col\":4}}]",
+  "content": "[{\"id\":\"j3dJGo8Ok6\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Purchase Order Trends\",\"col\":12}},{\"id\":\"k75jSq2D6Z\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Purchase Orders Count\",\"col\":4}},{\"id\":\"UPXys0lQLj\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Purchase Amount\",\"col\":4}},{\"id\":\"yQGK3eb2hg\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Average Order Values\",\"col\":4}},{\"id\":\"D6u0st7MRl\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Supplier Ldger\",\"col\":3}},{\"id\":\"oN7lXSwQji\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"Xe2GVLOq8J\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Reports &amp; Masters</b></span>\",\"col\":12}},{\"id\":\"QwqyG6XuUt\",\"type\":\"card\",\"data\":{\"card_name\":\"Buying\",\"col\":4}},{\"id\":\"bTPjOxC_N_\",\"type\":\"card\",\"data\":{\"card_name\":\"Items & Pricing\",\"col\":4}},{\"id\":\"87ht0HIneb\",\"type\":\"card\",\"data\":{\"card_name\":\"Settings\",\"col\":4}},{\"id\":\"EDOsBOmwgw\",\"type\":\"card\",\"data\":{\"card_name\":\"Supplier\",\"col\":4}},{\"id\":\"oWNNIiNb2i\",\"type\":\"card\",\"data\":{\"card_name\":\"Supplier Scorecard\",\"col\":4}},{\"id\":\"7F_13-ihHB\",\"type\":\"card\",\"data\":{\"card_name\":\"Key Reports\",\"col\":4}},{\"id\":\"pfwiLvionl\",\"type\":\"card\",\"data\":{\"card_name\":\"Other Reports\",\"col\":4}},{\"id\":\"8ySDy6s4qn\",\"type\":\"card\",\"data\":{\"card_name\":\"Regional\",\"col\":4}}]",
   "custom_blocks": [],
   "docstatus": 0,
   "doctype": "Workspace",
@@ -2386,7 +2401,7 @@
     "type": "Link"
    }
   ],
-  "modified": "2026-01-02 14:55:59.078773",
+  "modified": "2026-05-25 13:52:01.433314",
   "module": "Buying",
   "name": "Buying",
   "number_cards": [
@@ -2409,7 +2424,22 @@
   "restrict_to_domain": "",
   "roles": [],
   "sequence_id": 5.0,
-  "shortcuts": [],
+  "shortcuts": [
+   {
+    "color": "Grey",
+    "doc_view": "List",
+    "format": null,
+    "icon": null,
+    "kanban_board": null,
+    "label": "Supplier Ldger",
+    "link_to": "supplier-ledger",
+    "report_ref_doctype": null,
+    "restrict_to_domain": null,
+    "stats_filter": null,
+    "type": "Page",
+    "url": null
+   }
+  ],
   "title": "Buying",
   "type": "Workspace"
  },
@@ -5380,6 +5410,72 @@
   "type": "Workspace"
  },
  {
+  "app": null,
+  "charts": [
+   {
+    "chart_name": "Client Task Distribution",
+    "label": "Task Distribution"
+   }
+  ],
+  "content": "[{\"id\":\"TzROBUi7Fq\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Task Management &amp; Personal Workload</span>\",\"col\":12}},{\"id\":\"bKb7aa9na6\",\"type\":\"paragraph\",\"data\":{\"text\":\"Use <b>Tasks</b> to assign work to other team members and track project progress. Use <b>My To-Do</b> to view the action items currently assigned to you.\\\"\",\"col\":12}},{\"id\":\"YNyGiFPuQP\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Delegate a Task\",\"col\":3}},{\"id\":\"BkevMqDYoy\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Non Completed Tasks\",\"col\":3}},{\"id\":\"MBvgtHlWG-\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"My Pending To-Dos\",\"col\":4}},{\"id\":\"D-aVLQQNlf\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"My Pending Action Items\",\"col\":6}},{\"id\":\"zTL2uGwLiG\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Task Distribution\",\"col\":6}}]",
+  "custom_blocks": [],
+  "docstatus": 0,
+  "doctype": "Workspace",
+  "external_link": null,
+  "for_user": null,
+  "hide_custom": 0,
+  "icon": "list-todo",
+  "indicator_color": "green",
+  "is_hidden": 0,
+  "label": "My ToDo",
+  "link_to": null,
+  "link_type": "DocType",
+  "links": [],
+  "modified": "2026-05-25 13:09:59.870946",
+  "module": null,
+  "name": "My ToDo",
+  "number_cards": [
+   {
+    "label": "My Pending To-Dos",
+    "number_card_name": "My Pending To-Dos"
+   },
+   {
+    "label": "Non Completed Tasks",
+    "number_card_name": "Non Completed Tasks"
+   }
+  ],
+  "parent_page": null,
+  "public": 1,
+  "quick_lists": [
+   {
+    "document_type": "ToDo",
+    "label": "My Pending Action Items",
+    "quick_list_filter": "[[\"ToDo\",\"status\",\"=\",\"Open\"]]"
+   }
+  ],
+  "restrict_to_domain": null,
+  "roles": [],
+  "sequence_id": 1.0,
+  "shortcuts": [
+   {
+    "color": "Blue",
+    "doc_view": "List",
+    "format": null,
+    "icon": null,
+    "kanban_board": null,
+    "label": "Delegate a Task",
+    "link_to": "Task",
+    "report_ref_doctype": null,
+    "restrict_to_domain": null,
+    "stats_filter": "[]",
+    "type": "DocType",
+    "url": null
+   }
+  ],
+  "title": "My ToDo",
+  "type": "Workspace"
+ },
+ {
   "app": "erpnext",
   "charts": [
    {
@@ -8078,7 +8174,7 @@
   "hide_custom": 0,
   "icon": "hammer",
   "indicator_color": null,
-  "is_hidden": 0,
+  "is_hidden": 1,
   "label": "Build",
   "link_to": null,
   "link_type": null,
@@ -8519,7 +8615,7 @@
     "type": "Link"
    }
   ],
-  "modified": "2026-04-17 11:36:36.077389",
+  "modified": "2026-04-17 15:11:52.192274",
   "module": "Core",
   "name": "Build",
   "number_cards": [],

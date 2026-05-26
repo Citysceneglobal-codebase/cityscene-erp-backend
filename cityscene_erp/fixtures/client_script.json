@@ -1,1 +1,13 @@
-[]
+[
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Quotation",
+  "enabled": 1,
+  "modified": "2026-04-21 13:46:30.366949",
+  "module": null,
+  "name": "Fetch Residential SOW",
+  "script": "frappe.ui.form.on('Quotation', {\n    // 1. The trigger must exactly match the dropdown fieldname\n    custom_sow_template: function(frm) {\n        \n        // 2. Check the custom fieldname\n        if (frm.doc.custom_sow_template) {\n            \n            frappe.show_alert({message: 'Fetching Template...', indicator: 'blue'});\n\n            // 3. Fetch using the custom fieldname\n            frappe.model.with_doc('Scope of Work Template', frm.doc.custom_sow_template, function() {\n                let template_doc = frappe.get_doc('Scope of Work Template', frm.doc.custom_sow_template);\n                \n                // 4. Clear the custom table\n                frm.clear_table('custom_scope_of_work_tasks');\n                \n                // Note: scope_of_work_details likely DOES NOT have a custom_ prefix \n                // because you built it directly in a new DocType, not Customize Form!\n                if (template_doc && template_doc.scope_of_work_details) {\n                    template_doc.scope_of_work_details.forEach(row => {\n                        \n                        // 5. Add to the custom table\n                        let child = frm.add_child('custom_scope_of_work_tasks');\n                        child.task_description = row.task_description;\n                        child.in_scope = row.in_scope;\n                    });\n                    \n                    // 6. Refresh the custom table\n                    frm.refresh_field('custom_scope_of_work_tasks');\n                    frappe.msgprint(`Successfully loaded ${frm.doc.custom_sow_template} checklist!`);\n                }\n            });\n        }\n    }\n});",
+  "view": "Form"
+ }
+]
