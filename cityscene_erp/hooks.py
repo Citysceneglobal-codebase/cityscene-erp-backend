@@ -132,7 +132,14 @@ app_license = "mit"
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
+doc_events = {
+    "Customer": {
+        "after_insert": "cityscene_erp.api.party_automations.auto_create_ledger_for_party"
+    },
+    "Supplier": {
+        "after_insert": "cityscene_erp.api.party_automations.auto_create_ledger_for_party"
+    }
+}
 # 	"*": {
 # 		"on_update": "method",
 # 		"on_cancel": "method",
@@ -260,6 +267,8 @@ fixtures = [
     "Custom Field",
     "Property Setter",
     "Custom DocPerm", 
+    "Workspace Sidebar",
+    "Desktop Icon",
     
     # 2. Workflows
     "Workflow",

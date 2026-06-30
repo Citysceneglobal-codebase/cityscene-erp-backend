@@ -2,6 +2,27 @@
  {
   "docstatus": 0,
   "doctype": "Workflow Action Master",
+  "modified": "2026-04-06 15:42:22.290819",
+  "name": "Assign Surveyor",
+  "workflow_action_name": "Assign Surveyor"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2026-04-06 15:47:47.866850",
+  "name": "Submit Design",
+  "workflow_action_name": "Submit Design"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2026-04-06 15:50:32.834159",
+  "name": "Reject Survey",
+  "workflow_action_name": "Reject Survey"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
   "modified": "2026-04-16 00:24:53.732237",
   "name": "Approve",
   "workflow_action_name": "Approve"
@@ -61,5 +82,33 @@
   "modified": "2026-04-16 12:33:06.808788",
   "name": "Direct To Quotation",
   "workflow_action_name": "Direct To Quotation"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2026-04-06 15:44:23.518800",
+  "name": "Submit Survey",
+  "workflow_action_name": "Submit Survey"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2026-04-06 15:48:47.253613",
+  "name": "Send Proposal",
+  "workflow_action_name": "Send Proposal"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2026-04-06 15:51:15.993934",
+  "name": "Reject Design",
+  "workflow_action_name": "Reject Design"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2026-04-06 15:49:37.900605",
+  "name": "Win Opportunity",
+  "workflow_action_name": "Win Opportunity"
  }
 ]

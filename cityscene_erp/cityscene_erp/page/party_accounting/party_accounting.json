@@ -1,0 +1,28 @@
+{
+ "content": null,
+ "creation": "2026-06-30 14:05:20.949370",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2026-06-30 16:21:26.267587",
+ "modified_by": "Administrator",
+ "module": "Cityscene ERP",
+ "name": "party-accounting",
+ "owner": "Administrator",
+ "page_name": "party-accounting",
+ "roles": [
+  {
+   "role": "All"
+  },
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "Accounts Manager"
+  }
+ ],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 0
+}

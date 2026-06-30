@@ -79,5 +79,50 @@
   "name": "New",
   "style": "",
   "workflow_state_name": "New"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-04-06 15:40:41.398192",
+  "name": "Won - Pending Project",
+  "style": "",
+  "workflow_state_name": "Won - Pending Project"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-04-06 15:36:38.057706",
+  "name": "Survey Scheduled",
+  "style": "",
+  "workflow_state_name": "Survey Scheduled"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-04-06 15:37:17.951645",
+  "name": "Design Pending",
+  "style": "",
+  "workflow_state_name": "Design Pending"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-04-06 15:37:41.974946",
+  "name": "Proposal Ready",
+  "style": "",
+  "workflow_state_name": "Proposal Ready"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2026-04-06 15:35:10.854541",
+  "name": "New Enquiry",
+  "style": "",
+  "workflow_state_name": "New Enquiry"
  }
 ]
