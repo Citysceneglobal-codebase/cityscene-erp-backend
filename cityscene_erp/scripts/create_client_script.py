@@ -1,9 +1,6 @@
 import frappe
 
 def run():
-    frappe.init(site="cityscene-srb-erp")
-    frappe.connect()
-    
     if not frappe.db.exists("Client Script", "Payment Entry Date Automation"):
         doc = frappe.get_doc({
             "doctype": "Client Script",
