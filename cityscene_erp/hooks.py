@@ -184,9 +184,9 @@ doc_events = {
 # Overriding Methods
 # ------------------------------
 #
-# override_whitelisted_methods = {
-# 	"frappe.desk.doctype.event.event.get_events": "cityscene_erp.event.get_events"
-# }
+override_whitelisted_methods = {
+	"erpnext.controllers.accounts_controller.get_missing_company_details": "cityscene_erp.overrides.accounts_controller.get_missing_company_details"
+}
 #
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,
