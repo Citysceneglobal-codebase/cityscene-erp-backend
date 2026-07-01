@@ -64,5 +64,45 @@ if doc.custom_disable_auto_rounding:
 """
         ss.save(ignore_permissions=True)
 
+    # 5. Add Client Script for UX (Hide standard field when manual is enabled)
+    client_script_name = "Sales Invoice Manual Rounding UX"
+    client_script_code = """
+frappe.ui.form.on("Sales Invoice", {
+    refresh: function(frm) {
+        frm.trigger("toggle_rounding");
+    },
+    custom_disable_auto_rounding: function(frm) {
+        frm.trigger("toggle_rounding");
+        frm.trigger("custom_manual_rounding_amount");
+    },
+    custom_manual_rounding_amount: function(frm) {
+        if (frm.doc.custom_disable_auto_rounding) {
+            let rounded = flt(frm.doc.grand_total) + flt(frm.doc.custom_manual_rounding_amount);
+            frm.set_value("rounded_total", rounded);
+        }
+    },
+    toggle_rounding: function(frm) {
+        if (frm.doc.custom_disable_auto_rounding) {
+            frm.set_df_property('rounding_adjustment', 'hidden', 1);
+        } else {
+            frm.set_df_property('rounding_adjustment', 'hidden', 0);
+        }
+    }
+});
+"""
+    if not frappe.db.exists("Client Script", client_script_name):
+        frappe.get_doc({
+            "doctype": "Client Script",
+            "dt": "Sales Invoice",
+            "name": client_script_name,
+            "module": "Accounts",
+            "script": client_script_code,
+            "enabled": 1
+        }).insert(ignore_permissions=True)
+    else:
+        doc = frappe.get_doc("Client Script", client_script_name)
+        doc.script = client_script_code
+        doc.save(ignore_permissions=True)
+
     frappe.db.commit()
     print("Manual Rounding Setup Complete")
