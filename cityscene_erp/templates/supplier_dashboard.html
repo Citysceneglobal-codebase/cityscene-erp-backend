@@ -1,0 +1,613 @@
+<!-- Awesomplete for search dropdowns -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/awesomplete/1.1.5/awesomplete.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/awesomplete/1.1.5/awesomplete.min.js"></script>
+
+<style>
+    .supplier-dashboard {
+        margin-top: 30px;
+    }
+    .supplier-card {
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        padding: 30px;
+        margin-bottom: 20px;
+        border: 1px solid #eaeaea;
+    }
+    .supplier-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 30px;
+    }
+    .supplier-header h2 {
+        margin: 0;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+    .stat-card {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        text-align: center;
+    }
+    .stat-card h3 {
+        margin: 0;
+        font-size: 2.5rem;
+        color: #3498db;
+    }
+    .stat-card p {
+        margin: 5px 0 0;
+        color: #7f8c8d;
+        font-weight: 500;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+    }
+    .upload-area {
+        border: 2px dashed #bdc3c7;
+        border-radius: 8px;
+        padding: 40px;
+        text-align: center;
+        background-color: #fafbfc;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    .upload-area:hover {
+        border-color: #3498db;
+        background-color: #f1f8ff;
+    }
+    .upload-area i {
+        font-size: 3rem;
+        color: #95a5a6;
+        margin-bottom: 15px;
+    }
+    .btn-custom {
+        background-color: #3498db;
+        color: white;
+        border-radius: 6px;
+        padding: 10px 24px;
+        font-weight: 500;
+        border: none;
+        transition: background-color 0.2s;
+    }
+    .btn-custom:hover {
+        background-color: #2980b9;
+        color: white;
+    }
+    .awesomplete {
+        width: 100% !important;
+    }
+</style>
+
+<div class="supplier-dashboard">
+    <div class="supplier-header">
+        <h2>Welcome, {{ supplier_name }}</h2>
+    </div>
+    <div class="app-header">
+        <h2>Supplier Portal</h2>
+        <p>Manage your purchase orders, invoices, and rate lists directly.</p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mt-3">
+            <div class="stat-card blue">
+                <i class="fa fa-shopping-cart bg-icon"></i>
+                <h3 id="active-po-count">0</h3>
+                <p>Active POs</p>
+            </div>
+        </div>
+        <div class="col-md-4 mt-3">
+            <div class="stat-card purple">
+                <i class="fa fa-file-invoice-dollar bg-icon"></i>
+                <h3 id="pending-inv-count">0</h3>
+                <p>Pending Invoices</p>
+            </div>
+        </div>
+        <div class="col-md-4 mt-3">
+            <div class="stat-card green" onclick="showRateListsModal()">
+                <i class="fa fa-list bg-icon"></i>
+                <h3 id="rate-list-count">0</h3>
+                <p>Active Rate Lists</p>
+            </div>
+        </div>
+        <div class="col-md-4 mt-3">
+            <div class="stat-card orange" onclick="$('#createQuotationModal').modal('show'); if($('#quotation-items-body tr').length===0) addQuotationRow();">
+                <i class="fa fa-file-text-o bg-icon"></i>
+                <h3>+</h3>
+                <p>Create Quotation</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Rate Lists Modal -->
+    <div class="modal fade" id="rateListsModal" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title font-weight-bold">Active Rate Lists</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="outline: none; border: none; background: transparent; font-size: 1.5rem;">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body" id="rateListsModalBody">
+            <div class="text-center text-muted py-4">Loading...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Create Quotation Modal -->
+    <div class="modal fade" id="createQuotationModal" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title font-weight-bold">Create Proactive Quotation</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="outline: none; border: none; background: transparent; font-size: 1.5rem;">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body p-4">
+            <p class="text-muted">Enter items, quantities, and your offered rates to submit a quotation directly.</p>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead class="bg-light">
+                        <tr>
+                            <th width="40%">Item Code</th>
+                            <th width="25%">Quantity</th>
+                            <th width="25%">Rate</th>
+                            <th width="10%"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="quotation-items-body">
+                        <!-- Rows added here -->
+                    </tbody>
+                </table>
+            </div>
+            <button class="btn btn-sm btn-outline-primary" onclick="addQuotationRow()">
+                + Add Row
+            </button>
+          </div>
+          <div class="modal-footer bg-light">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" onclick="submitProactiveQuotation()" id="btn-submit-quotation">Submit Quotation</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="supplier-card">
+        <h4>Upload New Rate List</h4>
+        <p class="text-muted">Upload a CSV file containing your updated prices. The CSV must have headers: <strong>item_code</strong> and <strong>rate</strong>.</p>
+        
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Valid From</label>
+                    <input type="date" class="form-control" id="valid_from" required>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Valid Upto</label>
+                    <input type="date" class="form-control" id="valid_upto">
+                </div>
+            </div>
+        </div>
+
+        <ul class="nav nav-tabs mt-4" id="rateListTabs" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="upload-tab" data-toggle="tab" href="#upload" role="tab">Upload CSV</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="manual-tab" data-toggle="tab" href="#manual" role="tab">Enter Manually</a>
+            </li>
+        </ul>
+
+        <div class="tab-content mt-4" id="rateListTabsContent">
+            <!-- Upload Tab -->
+            <div class="tab-pane fade show active" id="upload" role="tabpanel">
+                <div class="text-right mb-2">
+                    <a href="/api/method/cityscene_erp.api.supplier_portal.download_template" class="btn btn-sm btn-outline-secondary">
+                        <i class="fa fa-download"></i> Download Example CSV
+                    </a>
+                </div>
+                <div class="upload-area" id="upload-area" onclick="document.getElementById('csv_file').click()">
+                    <i class="fa fa-cloud-upload"></i>
+                    <h5>Click to browse for CSV file</h5>
+                    <p class="mb-0" id="file-name-display">No file selected.</p>
+                    <input type="file" id="csv_file" accept=".csv" style="display: none;" onchange="updateFileName(this)">
+                </div>
+                <div class="text-right mt-4">
+                    <button class="btn btn-custom" id="btn-upload" onclick="uploadRateList()">Submit Rate List</button>
+                </div>
+            </div>
+
+            <!-- Manual Tab -->
+            <div class="tab-pane fade" id="manual" role="tabpanel">
+                <table class="table table-bordered" id="manual-items-table">
+                    <thead>
+                        <tr>
+                            <th>Item Search</th>
+                            <th width="150px">Rate</th>
+                            <th width="50px"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="manual-items-body">
+                        <!-- rows inserted via JS -->
+                    </tbody>
+                </table>
+                <button class="btn btn-sm btn-outline-primary mb-3" onclick="addManualRow()">+ Add Row</button>
+                <div class="text-right mt-4">
+                    <button class="btn btn-custom" id="btn-manual" onclick="submitManualRateList()">Submit Manual List</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function updateFileName(input) {
+        if (input.files && input.files[0]) {
+            document.getElementById('file-name-display').innerText = input.files[0].name;
+            document.getElementById('upload-area').style.borderColor = '#2ecc71';
+            document.getElementById('upload-area').style.backgroundColor = '#f4fbf7';
+        }
+    }
+
+    function uploadRateList() {
+        let fileInput = document.getElementById('csv_file');
+        let validFrom = document.getElementById('valid_from').value;
+        let validUpto = document.getElementById('valid_upto').value;
+
+        if (!validFrom) {
+            frappe.msgprint("Please select a Valid From date.");
+            return;
+        }
+
+        if (!fileInput.files || fileInput.files.length === 0) {
+            frappe.msgprint("Please select a CSV file to upload.");
+            return;
+        }
+
+        let file = fileInput.files[0];
+        let formData = new FormData();
+        formData.append("file", file);
+        formData.append("valid_from", validFrom);
+        if (validUpto) {
+            formData.append("valid_upto", validUpto);
+        }
+
+        frappe.call({
+            method: "cityscene_erp.api.supplier_portal.upload_rate_list",
+            args: {
+                valid_from: validFrom,
+                valid_upto: validUpto
+            },
+            async: true,
+            type: "POST",
+            processData: false,
+            contentType: false,
+            data: formData,
+            freeze: true,
+            freeze_message: "Processing CSV...",
+            callback: function(r) {
+                if (r.message && r.message.status === 'success') {
+                    frappe.msgprint({
+                        title: 'Success',
+                        message: 'Rate List successfully uploaded!',
+                        indicator: 'green'
+                    });
+                    document.getElementById('csv_file').value = "";
+                    document.getElementById('file-name-display').innerText = "No file selected.";
+                    setTimeout(() => window.location.reload(), 1500);
+                }
+            }
+        });
+    }
+
+    // Fetch dashboard stats on load
+    frappe.ready(function() {
+        frappe.call({
+            method: "cityscene_erp.api.supplier_portal.get_dashboard_stats",
+            callback: function(r) {
+                if (r.message) {
+                    document.getElementById('active-po-count').innerText = r.message.active_pos || 0;
+                    document.getElementById('pending-inv-count').innerText = r.message.pending_invoices || 0;
+                    document.getElementById('rate-list-count').innerText = r.message.rate_lists || 0;
+                }
+            }
+        });
+        
+        // Add one empty row on load for manual entry
+        addManualRow();
+    });
+
+    let manualRowCounter = 0;
+    function addManualRow() {
+        let tbody = document.getElementById('manual-items-body');
+        let index = manualRowCounter++;
+        let tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>
+                <div class="position-relative">
+                    <input type="text" class="form-control item-search awesomplete" id="item-search-${index}" placeholder="Search Item Code or Name..." autocomplete="off">
+                    <input type="hidden" class="item-code-val" id="item-code-${index}">
+                </div>
+            </td>
+            <td>
+                <input type="number" step="0.01" class="form-control item-rate" placeholder="0.00">
+            </td>
+            <td class="text-center align-middle">
+                <button class="btn btn-sm btn-light text-danger" onclick="deleteManualRow(this)" style="border-radius: 50%; width: 30px; height: 30px; padding: 0; line-height: 28px; border: 1px solid #ffcccc; font-size: 18px;">
+                    &times;
+                </button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+
+        // Initialize Awesomplete
+        setTimeout(() => {
+            let input = document.getElementById(`item-search-${index}`);
+            let hiddenInput = document.getElementById(`item-code-${index}`);
+            
+            let awesomplete = new Awesomplete(input, {
+                minChars: 0,
+                maxItems: 15,
+                autoFirst: true,
+                filter: function() { return true; }, // Backend handles filtering
+                item: function(text, input) {
+                    let li = document.createElement("li");
+                    li.innerHTML = text.label;
+                    li.className = "p-2 border-bottom";
+                    li.style.cursor = "pointer";
+                    li.setAttribute("aria-selected", "false");
+                    return li;
+                }
+            });
+
+            let searchTimeout = null;
+            function fetchItems() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    frappe.call({
+                        method: "cityscene_erp.api.supplier_portal.get_all_items",
+                        args: { search_term: input.value },
+                        callback: function(r) {
+                            if (r.message) {
+                                awesomplete.list = r.message.map(i => {
+                                    return {
+                                        label: `<strong>${i.item_code}</strong><br><small class="text-muted">${i.item_name}</small>`,
+                                        value: i.item_code
+                                    };
+                                });
+                                awesomplete.evaluate();
+                            }
+                        }
+                    });
+                }, 300);
+            }
+
+            input.addEventListener("input", fetchItems);
+            input.addEventListener("focus", function() {
+                if (!awesomplete.ul.childNodes.length) {
+                    fetchItems();
+                } else {
+                    awesomplete.evaluate();
+                }
+            });
+
+            // When an item is selected
+            input.addEventListener("awesomplete-selectcomplete", function(e) {
+                hiddenInput.value = e.text.value;
+                input.value = e.text.value;
+            });
+        }, 100);
+    }
+
+    function deleteManualRow(btn) {
+        let row = btn.closest('tr');
+        row.parentNode.removeChild(row);
+    }
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.classList.contains('item-search')) {
+            document.querySelectorAll('.search-results').forEach(el => el.style.display = 'none');
+        }
+    });
+
+    function submitManualRateList() {
+        let validFrom = document.getElementById('valid_from').value;
+        let validUpto = document.getElementById('valid_upto').value;
+
+        if (!validFrom) {
+            frappe.msgprint("Please select a Valid From date.");
+            return;
+        }
+
+        let items = [];
+        let tbody = document.getElementById('manual-items-body');
+        for (let i = 0; i < tbody.rows.length; i++) {
+            let row = tbody.rows[i];
+            let itemCode = row.querySelector('.item-code-val').value;
+            let rate = row.querySelector('.item-rate').value;
+            if (itemCode && rate) {
+                items.push({ item_code: itemCode, rate: rate });
+            }
+        }
+
+        if (items.length === 0) {
+            frappe.msgprint("Please add at least one item with a valid rate.");
+            return;
+        }
+
+        frappe.call({
+            method: "cityscene_erp.api.supplier_portal.create_manual_rate_list",
+            args: {
+                valid_from: validFrom,
+                valid_upto: validUpto,
+                items: JSON.stringify(items)
+            },
+            freeze: true,
+            freeze_message: "Submitting...",
+            callback: function(r) {
+                if (r.message && r.message.status === 'success') {
+                    frappe.msgprint({
+                        title: 'Success',
+                        message: 'Rate List successfully submitted!',
+                        indicator: 'green'
+                    });
+                    setTimeout(() => window.location.reload(), 1500);
+                }
+            }
+        });
+    }
+
+    function showRateListsModal() {
+        $('#rateListsModal').modal('show');
+        document.getElementById('rateListsModalBody').innerHTML = '<div class="text-center text-muted py-4">Loading...</div>';
+        
+        frappe.call({
+            method: "cityscene_erp.api.supplier_portal.get_rate_lists_details",
+            callback: function(r) {
+                if (r.message && r.message.length > 0) {
+                    let html = '';
+                    r.message.forEach(list => {
+                        html += `
+                        <div class="card mb-3 border">
+                            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                                <strong>${list.name}</strong>
+                                <span class="badge badge-primary">${list.status || 'Active'}</span>
+                            </div>
+                            <div class="card-body py-2">
+                                <p class="mb-2 text-muted small">Valid From: ${list.valid_from} ${list.valid_upto ? 'to ' + list.valid_upto : ''}</p>
+                                <table class="table table-sm table-bordered">
+                                    <thead class="bg-light">
+                                        <tr>
+                                            <th>Item Code</th>
+                                            <th>Item Name</th>
+                                            <th class="text-right">Rate</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                        `;
+                        list.items.forEach(item => {
+                            html += `
+                                        <tr>
+                                            <td>${item.item_code}</td>
+                                            <td>${item.item_name}</td>
+                                            <td class="text-right font-weight-bold">₹${parseFloat(item.rate).toFixed(2)}</td>
+                                        </tr>
+                            `;
+                        });
+                        html += `
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        `;
+                    });
+                    document.getElementById('rateListsModalBody').innerHTML = html;
+                } else {
+                    document.getElementById('rateListsModalBody').innerHTML = '<div class="text-center text-muted py-4">No active rate lists found.</div>';
+                }
+            }
+        });
+    }
+
+    let qRowCounter = 0;
+    function addQuotationRow() {
+        let tbody = document.getElementById('quotation-items-body');
+        let index = qRowCounter++;
+        let tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>
+                <div class="position-relative">
+                    <input type="text" class="form-control" id="q-search-${index}" placeholder="Search Item..." autocomplete="off">
+                    <input type="hidden" class="q-item-code-val" id="q-code-${index}">
+                    <i class="fa fa-search position-absolute text-muted" style="right: 10px; top: 12px;"></i>
+                </div>
+            </td>
+            <td>
+                <input type="number" class="form-control q-item-qty" placeholder="0" min="1" value="1">
+            </td>
+            <td>
+                <input type="number" step="0.01" class="form-control q-item-rate" placeholder="0.00">
+            </td>
+            <td class="text-center">
+                <button type="button" class="btn btn-sm btn-outline-danger" onclick="this.closest('tr').remove()" style="padding: 2px 8px; font-size: 14px;">
+                    &times;
+                </button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+
+        setTimeout(() => {
+            let input = document.getElementById(`q-search-${index}`);
+            let hiddenInput = document.getElementById(`q-code-${index}`);
+            
+            let awesomplete = new Awesomplete(input, {
+                minChars: 0, maxItems: 15, autoFirst: true,
+                filter: function() { return true; }, list: [] 
+            });
+
+            input.addEventListener('input', function() {
+                let val = this.value;
+                if (val.length < 2) return;
+                frappe.call({
+                    method: 'cityscene_erp.api.supplier_portal.get_all_items',
+                    args: { search_term: val },
+                    callback: function(r) {
+                        if (r.message && r.message.length > 0) {
+                            awesomplete.list = r.message.map(item => ({
+                                label: `<div style="padding:5px; border-bottom:1px solid #f0f0f0;"><strong>${item.value}</strong><br><small class="text-muted">${item.description}</small></div>`,
+                                value: item.value
+                            }));
+                            awesomplete.evaluate();
+                        }
+                    }
+                });
+            });
+
+            input.addEventListener('awesomplete-selectcomplete', function(e) {
+                hiddenInput.value = e.text.value;
+                input.value = e.text.value; 
+            });
+        }, 100);
+    }
+
+    function submitProactiveQuotation() {
+        let tbody = document.getElementById('quotation-items-body');
+        let items = [];
+        
+        for (let i = 0; i < tbody.rows.length; i++) {
+            let row = tbody.rows[i];
+            let itemCode = row.querySelector('.q-item-code-val').value;
+            let qty = parseFloat(row.querySelector('.q-item-qty').value);
+            let rate = parseFloat(row.querySelector('.q-item-rate').value);
+            if (itemCode && qty > 0 && rate >= 0) {
+                items.push({ item_code: itemCode, qty: qty, rate: rate });
+            }
+        }
+        
+        if (items.length === 0) {
+            frappe.msgprint({title: __('Error'), indicator: 'red', message: __('Please add at least one valid item with quantity and rate.')});
+            return;
+        }
+
+        $('#btn-submit-quotation').prop('disabled', true).text('Submitting...');
+        
+        frappe.call({
+            method: 'cityscene_erp.api.supplier_portal.submit_proactive_quotation',
+            args: { items: JSON.stringify(items) },
+            callback: function(r) {
+                $('#btn-submit-quotation').prop('disabled', false).text('Submit Quotation');
+                if (!r.exc) {
+                    $('#createQuotationModal').modal('hide');
+                    frappe.msgprint({title: __('Success'), indicator: 'green', message: __('Quotation submitted successfully!')});
+                    setTimeout(() => window.location.reload(), 1500);
+                }
+            }
+        });
+    }
+</script>

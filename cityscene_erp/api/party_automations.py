@@ -49,3 +49,41 @@ def auto_create_ledger_for_party(doc, method):
             auto_create_party_account(party_type, party, company, parent_account)
         except Exception as e:
             frappe.log_error(message=frappe.get_traceback(), title=f"Failed to auto-create ledger for {party}")
+
+def ensure_supplier_role_for_portal_users(doc, method=None):
+    """
+    Hook for on_update on Supplier to ensure portal users get the 'Supplier' role.
+    """
+    if not hasattr(doc, "portal_users"):
+        return
+        
+    for pu in doc.portal_users:
+        if pu.user:
+            try:
+                user_doc = frappe.get_doc("User", pu.user)
+                if "Supplier" not in [r.role for r in user_doc.roles]:
+                    user_doc.add_roles("Supplier")
+            except Exception as e:
+                frappe.log_error(message=frappe.get_traceback(), title=f"Failed to add Supplier role to {pu.user}")
+
+def ensure_supplier_role_for_contact(doc, method=None):
+    """
+    Hook for on_update on Contact to ensure users linked to a Supplier get the 'Supplier' role.
+    """
+    if not doc.user:
+        return
+    
+    is_supplier = False
+    for link in doc.links:
+        if link.link_doctype == "Supplier":
+            is_supplier = True
+            break
+            
+    if is_supplier:
+        try:
+            user_doc = frappe.get_doc("User", doc.user)
+            if "Supplier" not in [r.role for r in user_doc.roles]:
+                user_doc.add_roles("Supplier")
+        except Exception as e:
+            pass
+

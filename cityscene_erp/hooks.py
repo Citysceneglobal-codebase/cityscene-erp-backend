@@ -29,8 +29,8 @@ app_license = "mit"
 # app_include_js = "/assets/cityscene_erp/js/cityscene_erp.js"
 
 # include js, css files in header of web template
-# web_include_css = "/assets/cityscene_erp/css/cityscene_erp.css"
-# web_include_js = "/assets/cityscene_erp/js/cityscene_erp.js"
+web_include_css = "/assets/cityscene_erp/css/supplier_portal.css"
+web_include_js = "/assets/cityscene_erp/js/supplier_portal.js"
 
 # include custom scss in every website theme (without file extension ".scss")
 # website_theme_scss = "cityscene_erp/public/scss/website"
@@ -137,7 +137,11 @@ doc_events = {
         "after_insert": "cityscene_erp.api.party_automations.auto_create_ledger_for_party"
     },
     "Supplier": {
-        "after_insert": "cityscene_erp.api.party_automations.auto_create_ledger_for_party"
+        "after_insert": "cityscene_erp.api.party_automations.auto_create_ledger_for_party",
+        "on_update": "cityscene_erp.api.party_automations.ensure_supplier_role_for_portal_users"
+    },
+    "Contact": {
+        "on_update": "cityscene_erp.api.party_automations.ensure_supplier_role_for_contact"
     }
 }
 # 	"*": {
