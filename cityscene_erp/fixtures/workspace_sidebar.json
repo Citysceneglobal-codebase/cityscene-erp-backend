@@ -12142,6 +12142,55 @@
   "title": "Party Accounting"
  },
  {
+  "app": null,
+  "docstatus": 0,
+  "doctype": "Workspace Sidebar",
+  "for_user": null,
+  "header_icon": "list-todo",
+  "items": [
+   {
+    "child": 0,
+    "collapsible": 1,
+    "filters": null,
+    "icon": null,
+    "indent": 0,
+    "keep_closed": 0,
+    "label": "Home",
+    "link_to": "My ToDo",
+    "link_type": "Workspace",
+    "navigate_to_tab": null,
+    "open_in_new_tab": 1,
+    "route_options": null,
+    "show_arrow": 0,
+    "type": "Link",
+    "url": null
+   },
+   {
+    "child": 0,
+    "collapsible": 1,
+    "filters": null,
+    "icon": null,
+    "indent": 0,
+    "keep_closed": 0,
+    "label": "Delegate a Task",
+    "link_to": "Task",
+    "link_type": "DocType",
+    "navigate_to_tab": null,
+    "open_in_new_tab": 1,
+    "route_options": null,
+    "show_arrow": 0,
+    "type": "Link",
+    "url": null
+   }
+  ],
+  "modified": "2026-07-01 16:20:21.713310",
+  "module": null,
+  "module_onboarding": null,
+  "name": "My ToDo",
+  "standard": 0,
+  "title": "My ToDo"
+ },
+ {
   "app": "erpnext",
   "docstatus": 0,
   "doctype": "Workspace Sidebar",

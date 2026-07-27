@@ -1,0 +1,147 @@
+/* ============================================================
+   Check-In / Check-Out Widget — cityscene_erp v17
+   ============================================================ */
+
+.checkin-widget-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 16px;
+  background: linear-gradient(135deg, #1a1f2e 0%, #0f1419 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+  min-width: 200px;
+  max-width: 280px;
+  margin: 0 auto;
+}
+
+/* Timer */
+.timer-display {
+  font-size: 2rem;
+  font-weight: 700;
+  font-family: 'Courier New', Courier, monospace;
+  color: #00e5b0;
+  letter-spacing: 0.1em;
+  margin-bottom: 16px;
+  text-shadow: 0 0 12px rgba(0, 229, 176, 0.4);
+}
+
+/* Base button */
+.btn-check,
+.btn-check-out {
+  padding: 10px 32px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+  letter-spacing: 0.05em;
+}
+
+/* Check-In button */
+.btn-check {
+  background: #0db974;
+  color: #fff;
+  box-shadow: 0 0 16px rgba(13, 185, 116, 0.35);
+}
+
+.btn-check:hover:not(:disabled) {
+  background: #0aa865;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(13, 185, 116, 0.5);
+}
+
+/* Check-Out button */
+.btn-check-out {
+  background: #e53e3e;
+  color: #fff;
+  box-shadow: 0 0 16px rgba(229, 62, 62, 0.35);
+}
+
+.btn-check-out:hover:not(:disabled) {
+  background: #c53030;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(229, 62, 62, 0.5);
+}
+
+/* Disabled state */
+.btn-check:disabled,
+.btn-check-out:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Photo preview */
+#photoPreview {
+  margin-top: 12px;
+  border-radius: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  max-height: 90px;
+  width: auto;
+}
+
+/* Upload spinner */
+@keyframes csc-spin {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+#cscUploadIndicator {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 24px;
+  height: 24px;
+  border: 4px solid #0db974;
+  border-top: 4px solid transparent;
+  border-radius: 50%;
+  animation: csc-spin 0.8s linear infinite;
+  z-index: 99999;
+}
+
+/* Camera overlay buttons */
+.csc-cam-btn {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 24px;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  z-index: 10000;
+}
+
+.csc-cam-capture {
+  bottom: 14%;
+  background: #0db974;
+  color: #fff;
+}
+
+.csc-cam-switch {
+  bottom: 5%;
+  background: #4a6cf7;
+  color: #fff;
+}
+
+.csc-cam-close {
+  top: 16px;
+  right: 16px;
+  left: auto;
+  transform: none;
+  bottom: auto;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

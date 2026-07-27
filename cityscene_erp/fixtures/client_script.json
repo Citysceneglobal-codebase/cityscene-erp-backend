@@ -42,5 +42,38 @@
   "name": "Auto-Map Payment Entry Account",
   "script": "\nfrappe.ui.form.on('Payment Entry', {\n    party: function(frm) {\n        if (!frm.doc.party || !frm.doc.party_type || !frm.doc.company) return;\n        \n        frappe.call({\n            method: 'erpnext.accounts.party.get_party_account',\n            args: {\n                party_type: frm.doc.party_type,\n                party: frm.doc.party,\n                company: frm.doc.company\n            },\n            callback: function(r) {\n                if (r.message) {\n                    frm.set_value('party_account', r.message);\n                } else {\n                    prompt_create_account(frm, frm.doc.party_type, frm.doc.party, 'party_account');\n                }\n            }\n        });\n    }\n});\n\nfunction prompt_create_account(frm, party_type, party, fieldname) {\n    let d = new frappe.ui.Dialog({\n        title: __('Create Dedicated Ledger Account'),\n        fields: [\n            {\n                label: 'Message',\n                fieldtype: 'HTML',\n                options: `<p><b>${party}</b> does not have a dedicated ledger in ${frm.doc.company}.</p><p>Please select a Parent Account to create it automatically.</p>`\n            },\n            {\n                label: 'Parent Account',\n                fieldname: 'parent_account',\n                fieldtype: 'Link',\n                options: 'Account',\n                reqd: 1,\n                get_query: function() {\n                    return {\n                        filters: {\n                            'is_group': 1,\n                            'company': frm.doc.company,\n                            'account_type': party_type === 'Customer' ? 'Receivable' : 'Payable'\n                        }\n                    };\n                }\n            }\n        ],\n        primary_action_label: 'Create Account',\n        primary_action: function(values) {\n            frappe.call({\n                method: 'cityscene_erp.api.account_manager.auto_create_party_account',\n                args: {\n                    party_type: party_type,\n                    party: party,\n                    company: frm.doc.company,\n                    parent_account: values.parent_account\n                },\n                callback: function(r) {\n                    if (r.message) {\n                        frm.set_value(fieldname, r.message);\n                        frappe.show_alert({message: __('Account created successfully'), indicator: 'green'});\n                        d.hide();\n                    }\n                }\n            });\n        }\n    });\n    \n    d.get_close_btn().on('click', function() {\n        frm.set_value('party', '');\n        frm.set_value(fieldname, '');\n    });\n    \n    d.show();\n}\n",
   "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Payment Entry",
+  "enabled": 1,
+  "modified": "2026-07-01 11:56:03.268088",
+  "module": "Accounts",
+  "name": "Payment Entry Date Automation",
+  "script": "\nfrappe.ui.form.on('Payment Entry', {\n    posting_date: function(frm) {\n        if (frm.doc.posting_date) {\n            frm.set_value('reference_date', frm.doc.posting_date);\n        }\n    }\n});\n            ",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Sales Invoice",
+  "enabled": 1,
+  "modified": "2026-07-01 12:19:02.603474",
+  "module": "Accounts",
+  "name": "Sales Invoice Manual Rounding UX",
+  "script": "\nfrappe.ui.form.on(\"Sales Invoice\", {\n    refresh: function(frm) {\n        frm.trigger(\"toggle_rounding\");\n    },\n    custom_disable_auto_rounding: function(frm) {\n        frm.trigger(\"toggle_rounding\");\n        frm.trigger(\"custom_manual_rounding_amount\");\n    },\n    custom_manual_rounding_amount: function(frm) {\n        if (frm.doc.custom_disable_auto_rounding) {\n            let rounded = flt(frm.doc.grand_total) + flt(frm.doc.custom_manual_rounding_amount);\n            frm.set_value(\"rounded_total\", rounded);\n        }\n    },\n    toggle_rounding: function(frm) {\n        if (frm.doc.custom_disable_auto_rounding) {\n            frm.set_df_property('rounding_adjustment', 'hidden', 1);\n        } else {\n            frm.set_df_property('rounding_adjustment', 'hidden', 0);\n        }\n    }\n});\n",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "User",
+  "enabled": 0,
+  "modified": "2026-07-24 05:48:36.612472",
+  "module": "Cityscene ERP",
+  "name": "Filter System Users Default",
+  "script": "\nfrappe.listview_settings['User'] = {\n    onload: function(listview) {\n        // Check if there is already a filter for user_type\n        let existing_filters = listview.filter_area.get();\n        let has_user_type_filter = false;\n        \n        for (let i = 0; i < existing_filters.length; i++) {\n            if (existing_filters[i][1] === 'user_type') {\n                has_user_type_filter = true;\n                break;\n            }\n        }\n        \n        if (!has_user_type_filter) {\n            listview.filter_area.add([\n                ['User', 'user_type', '=', 'System User']\n            ]);\n        }\n    }\n};\n",
+  "view": "List"
  }
 ]

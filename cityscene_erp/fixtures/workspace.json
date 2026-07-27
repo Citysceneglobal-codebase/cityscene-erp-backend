@@ -9679,14 +9679,14 @@
  },
  {
   "app": "hrms",
-  "charts": [
+  "charts": [],
+  "content": "[{\"id\":\"9_DQbkhJgn\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"HSzesoHdDc\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Employee_Checkin_Widget\",\"col\":12}},{\"id\":\"mYz7o2zWVf\",\"type\":\"header\",\"data\":{\"text\":\"<span style=\\\"font-size: 18px;\\\"><b>Masters &amp; Reports</b></span>\",\"col\":12}},{\"id\":\"iBvYqY6Ul6\",\"type\":\"card\",\"data\":{\"card_name\":\"Shifts\",\"col\":4}},{\"id\":\"aCKU8VAUu8\",\"type\":\"card\",\"data\":{\"card_name\":\"Attendance\",\"col\":4}},{\"id\":\"CMPmxSUFjB\",\"type\":\"card\",\"data\":{\"card_name\":\"Time\",\"col\":4}},{\"id\":\"v61fwPM9fG\",\"type\":\"card\",\"data\":{\"card_name\":\"Overtime\",\"col\":4}},{\"id\":\"WAO9X_IrfP\",\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4}}]",
+  "custom_blocks": [
    {
-    "chart_name": "Attendance Count",
-    "label": "Attendance Count"
+    "custom_block_name": "Employee_Checkin_Widget",
+    "label": "Employee_Checkin_Widget"
    }
   ],
-  "content": "[{\"id\":\"r0a57m9-Yx\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Attendance Count\",\"col\":12}},{\"id\":\"9_DQbkhJgn\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"mYz7o2zWVf\",\"type\":\"header\",\"data\":{\"text\":\"<span style=\\\"font-size: 18px;\\\"><b>Masters &amp; Reports</b></span>\",\"col\":12}},{\"id\":\"iBvYqY6Ul6\",\"type\":\"card\",\"data\":{\"card_name\":\"Shifts\",\"col\":4}},{\"id\":\"aCKU8VAUu8\",\"type\":\"card\",\"data\":{\"card_name\":\"Attendance\",\"col\":4}},{\"id\":\"CMPmxSUFjB\",\"type\":\"card\",\"data\":{\"card_name\":\"Time\",\"col\":4}},{\"id\":\"v61fwPM9fG\",\"type\":\"card\",\"data\":{\"card_name\":\"Overtime\",\"col\":4}},{\"id\":\"WAO9X_IrfP\",\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4}}]",
-  "custom_blocks": [],
   "docstatus": 0,
   "doctype": "Workspace",
   "external_link": null,
@@ -10116,7 +10116,7 @@
     "type": "Link"
    }
   ],
-  "modified": "2026-01-09 18:01:42.721780",
+  "modified": "2026-07-27 10:18:07.892113",
   "module": "HR",
   "name": "Shift & Attendance",
   "number_cards": [],

@@ -25,7 +25,9 @@ app_license = "mit"
 # ------------------
 
 # include js, css files in header of desk.html
-# app_include_css = "/assets/cityscene_erp/css/cityscene_erp.css"
+app_include_css = [
+    "/assets/cityscene_erp/css/checkin_widget.css",
+]
 # app_include_js = "/assets/cityscene_erp/js/cityscene_erp.js"
 
 # include js, css files in header of web template
@@ -133,6 +135,9 @@ web_include_js = "/assets/cityscene_erp/js/supplier_portal.js"
 # Hook on document methods and events
 
 doc_events = {
+    "Employee Checkin": {
+        "before_save": "cityscene_erp.custom_checkin.compute_late_early"
+    },
     "Customer": {
         "after_insert": "cityscene_erp.api.party_automations.auto_create_ledger_for_party"
     },
