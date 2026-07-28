@@ -552,31 +552,53 @@
             let hiddenInput = document.getElementById(`q-code-${index}`);
             
             let awesomplete = new Awesomplete(input, {
-                minChars: 0, maxItems: 15, autoFirst: true,
-                filter: function() { return true; }, list: [] 
+                minChars: 0, 
+                maxItems: 15, 
+                autoFirst: true,
+                list: [],
+                data: function (item, input) { return { label: item.label, value: item.value }; },
+                filter: function() { return true; }, 
+                item: function(text, input) {
+                    let li = document.createElement("li");
+                    li.innerHTML = text.label;
+                    li.className = "p-2 border-bottom";
+                    li.style.cursor = "pointer";
+                    li.setAttribute("aria-selected", "false");
+                    return li;
+                }
             });
 
-            input.addEventListener('input', function() {
-                let val = this.value;
-                if (val.length < 2) return;
-                frappe.call({
-                    method: 'cityscene_erp.api.supplier_portal.get_all_items',
-                    args: { search_term: val },
-                    callback: function(r) {
-                        if (r.message && r.message.length > 0) {
-                            awesomplete.list = r.message.map(item => ({
-                                label: `<div style="padding:5px; border-bottom:1px solid #f0f0f0;"><strong>${item.value}</strong><br><small class="text-muted">${item.description}</small></div>`,
-                                value: item.value
-                            }));
-                            awesomplete.evaluate();
+            let searchTimeout = null;
+            function fetchItems() {
+                if (searchTimeout) clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    frappe.call({
+                        method: 'cityscene_erp.api.supplier_portal.get_all_items',
+                        args: { search_term: input.value || "" },
+                        callback: function(r) {
+                            if (r.message && Array.isArray(r.message)) {
+                                awesomplete.list = r.message.map(i => ({
+                                    label: `<strong>${i.item_code}</strong><br><small class="text-muted">${i.item_name}</small>`,
+                                    value: i.item_code
+                                }));
+                                awesomplete.evaluate();
+                                awesomplete.open();
+                            }
                         }
-                    }
-                });
-            });
+                    });
+                }, 300);
+            }
+
+            input.addEventListener('input', fetchItems);
+            input.addEventListener('focus', fetchItems);
 
             input.addEventListener('awesomplete-selectcomplete', function(e) {
                 hiddenInput.value = e.text.value;
                 input.value = e.text.value; 
+            });
+            
+            input.addEventListener("blur", function() {
+                setTimeout(() => { awesomplete.close(); }, 200);
             });
         }, 100);
     }
