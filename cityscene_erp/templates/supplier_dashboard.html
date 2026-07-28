@@ -3,6 +3,20 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/awesomplete/1.1.5/awesomplete.min.js"></script>
 
 <style>
+    /* Fix for dropdowns being cut off by table-responsive or going under buttons */
+    .table-responsive {
+        overflow: visible !important;
+    }
+    .awesomplete {
+        position: relative;
+        z-index: 99999 !important;
+    }
+    .awesomplete > ul {
+        z-index: 99999 !important;
+        max-height: 250px !important;
+        overflow-y: auto !important;
+    }
+
     .supplier-dashboard {
         margin-top: 30px;
     }
@@ -375,7 +389,7 @@
                 searchTimeout = setTimeout(() => {
                     frappe.call({
                         method: "cityscene_erp.api.supplier_portal.get_all_items",
-                        args: { search_term: input.value || "" },
+                        args: { search_term: input.value || "", _t: Date.now() },
                         callback: function(r) {
                             if (r.message && Array.isArray(r.message)) {
                                 let items = r.message.map(i => ({
@@ -574,7 +588,7 @@
                 searchTimeout = setTimeout(() => {
                     frappe.call({
                         method: 'cityscene_erp.api.supplier_portal.get_all_items',
-                        args: { search_term: input.value || "" },
+                        args: { search_term: input.value || "", _t: Date.now() },
                         callback: function(r) {
                             if (r.message && Array.isArray(r.message)) {
                                 awesomplete.list = r.message.map(i => ({
