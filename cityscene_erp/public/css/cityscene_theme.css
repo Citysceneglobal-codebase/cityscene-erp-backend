@@ -1,0 +1,17 @@
+/* empty */
+
+/* Fix for awesomplete dropdowns hiding behind table bounds and buttons */
+.table-responsive {
+    overflow: visible !important;
+}
+
+.awesomplete {
+    position: relative;
+    z-index: 99999 !important;
+}
+
+.awesomplete > ul {
+    z-index: 99999 !important;
+    max-height: 250px !important;
+    overflow-y: auto !important;
+}
