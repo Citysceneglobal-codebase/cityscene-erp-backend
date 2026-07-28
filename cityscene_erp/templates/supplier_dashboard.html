@@ -330,7 +330,7 @@
         tr.innerHTML = `
             <td>
                 <div class="position-relative">
-                    <input type="text" class="form-control item-search awesomplete" id="item-search-${index}" placeholder="Search Item Code or Name..." autocomplete="off">
+                    <input type="text" class="form-control item-search" id="item-search-${index}" placeholder="Search Item Code or Name..." autocomplete="off">
                     <input type="hidden" class="item-code-val" id="item-code-${index}">
                 </div>
             </td>
@@ -354,6 +354,7 @@
                 minChars: 0,
                 maxItems: 15,
                 autoFirst: true,
+                list: [],
                 filter: function() { return true; }, // Backend handles filtering
                 item: function(text, input) {
                     let li = document.createElement("li");
