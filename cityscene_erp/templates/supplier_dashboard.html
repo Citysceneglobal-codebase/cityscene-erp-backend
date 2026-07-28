@@ -345,7 +345,7 @@
         `;
         tbody.appendChild(tr);
 
-        // Initialize Awesomplete
+        // Initialize Awesomplete robustly
         setTimeout(() => {
             let input = document.getElementById(`item-search-${index}`);
             let hiddenInput = document.getElementById(`item-code-${index}`);
@@ -355,6 +355,9 @@
                 maxItems: 15,
                 autoFirst: true,
                 list: [],
+                data: function (item, input) {
+                    return { label: item.label, value: item.value };
+                },
                 filter: function() { return true; }, // Backend handles filtering
                 item: function(text, input) {
                     let li = document.createElement("li");
@@ -368,20 +371,21 @@
 
             let searchTimeout = null;
             function fetchItems() {
-                clearTimeout(searchTimeout);
+                if (searchTimeout) clearTimeout(searchTimeout);
                 searchTimeout = setTimeout(() => {
                     frappe.call({
                         method: "cityscene_erp.api.supplier_portal.get_all_items",
-                        args: { search_term: input.value },
+                        args: { search_term: input.value || "" },
                         callback: function(r) {
-                            if (r.message) {
-                                awesomplete.list = r.message.map(i => {
-                                    return {
-                                        label: `<strong>${i.item_code}</strong><br><small class="text-muted">${i.item_name}</small>`,
-                                        value: i.item_code
-                                    };
-                                });
+                            if (r.message && Array.isArray(r.message)) {
+                                let items = r.message.map(i => ({
+                                    label: `<strong>${i.item_code}</strong><br><small class="text-muted">${i.item_name}</small>`,
+                                    value: i.item_code
+                                }));
+                                awesomplete.list = items;
+                                // Force evaluate and open to ensure visibility
                                 awesomplete.evaluate();
+                                awesomplete.open();
                             }
                         }
                     });
@@ -389,18 +393,18 @@
             }
 
             input.addEventListener("input", fetchItems);
-            input.addEventListener("focus", function() {
-                if (!awesomplete.ul.childNodes.length) {
-                    fetchItems();
-                } else {
-                    awesomplete.evaluate();
-                }
-            });
+            // On focus, always fetch to refresh the list and forcefully open the dropdown
+            input.addEventListener("focus", fetchItems);
 
             // When an item is selected
             input.addEventListener("awesomplete-selectcomplete", function(e) {
                 hiddenInput.value = e.text.value;
                 input.value = e.text.value;
+            });
+            
+            // Fix sticky dropdowns on blur
+            input.addEventListener("blur", function() {
+                setTimeout(() => { awesomplete.close(); }, 200);
             });
         }, 100);
     }
