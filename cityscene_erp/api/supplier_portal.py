@@ -78,6 +78,7 @@ def upload_rate_list(valid_from: str, valid_upto: str = None):
     for row in csv_reader:
         item_code = row.get("item_code") or row.get("Item Code")
         rate = row.get("rate") or row.get("Rate")
+        description = row.get("description") or row.get("Description") or ""
         
         if not item_code or not rate:
             continue
@@ -89,11 +90,19 @@ def upload_rate_list(valid_from: str, valid_upto: str = None):
             rate_val = float(rate)
         except ValueError:
             continue
-            
-        doc.append("items", {
+
+        row_data = {
             "item_code": item_code,
             "rate": rate_val
-        })
+        }
+        # Add description only if the field exists on the child table
+        try:
+            row_data["description"] = description
+            doc.append("items", row_data)
+        except Exception:
+            del row_data["description"]
+            doc.append("items", row_data)
+            
         items_added += 1
 
     if items_added == 0:
@@ -106,7 +115,7 @@ def upload_rate_list(valid_from: str, valid_upto: str = None):
 
 @frappe.whitelist()
 def download_template():
-    csv_data = "item_code,rate\n"
+    csv_data = "item_code,rate,description\n"
     frappe.response['result'] = csv_data
     frappe.response['type'] = 'csv'
     frappe.response['doctype'] = "Supplier Rate List Template"
@@ -141,10 +150,19 @@ def create_manual_rate_list(valid_from: str, items: str, valid_upto: str = None)
         doc.valid_upto = valid_upto
         
     for item in items:
-        doc.append("items", {
+        row_data = {
             "item_code": item.get("item_code"),
-            "rate": float(item.get("rate") or 0)
-        })
+            "rate": float(item.get("rate") or 0),
+        }
+        # Safely add description and attachment if the child table supports them
+        try:
+            row_data["description"] = item.get("description") or ""
+            row_data["attachment"] = item.get("attachment") or ""
+            doc.append("items", row_data)
+        except Exception:
+            del row_data["description"]
+            del row_data["attachment"]
+            doc.append("items", row_data)
         
     doc.insert(ignore_permissions=True)
     doc.submit()
@@ -209,7 +227,7 @@ def get_rate_lists_details():
     for rl in rate_lists:
         items = frappe.get_all("Supplier Rate List Item",
             filters={"parent": rl.name},
-            fields=["item_code", "rate"],
+            fields=["item_code", "rate", "description", "attachment"],
             ignore_permissions=True
         )
         

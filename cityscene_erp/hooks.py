@@ -28,7 +28,7 @@ app_license = "mit"
 app_include_css = [
     "/assets/cityscene_erp/css/checkin_widget.css",
 ]
-# app_include_js = "/assets/cityscene_erp/js/cityscene_erp.js"
+app_include_js = []
 
 # include js, css files in header of web template
 web_include_css = "/assets/cityscene_erp/css/supplier_portal.css"
@@ -308,3 +308,4 @@ custom_translations = {
         "ERPNext": "SRB Power ERP"
     }
 }
+# Nudge

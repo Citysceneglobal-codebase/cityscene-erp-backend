@@ -226,7 +226,7 @@
 
     <div class="supplier-card">
         <h4>Upload New Rate List</h4>
-        <p class="text-muted">Upload a CSV file containing your updated prices. The CSV must have headers: <strong>item_code</strong> and <strong>rate</strong>.</p>
+        <p class="text-muted">Upload a CSV file containing your updated prices. The CSV must have headers: <strong>item_code</strong>, <strong>rate</strong>, and optionally <strong>description</strong>.</p>
         
         <div class="row mt-4">
             <div class="col-md-6">
@@ -276,9 +276,11 @@
                 <table class="table table-bordered" id="manual-items-table">
                     <thead>
                         <tr>
-                            <th>Item Search</th>
-                            <th width="150px">Rate</th>
-                            <th width="50px"></th>
+                            <th width="25%">Item Search</th>
+                            <th width="30%">Description</th>
+                            <th width="20%">Attachment</th>
+                            <th width="15%">Rate</th>
+                            <th width="10%"></th>
                         </tr>
                     </thead>
                     <tbody id="manual-items-body">
@@ -470,6 +472,14 @@
                 </div>
             </td>
             <td>
+                <textarea class="form-control item-desc" rows="1" placeholder="Optional description..."></textarea>
+            </td>
+            <td>
+                <input type="file" class="form-control-file item-file-input" style="font-size: 12px;" onchange="uploadItemAttachment(this, ${index})">
+                <input type="hidden" class="item-attachment-val" id="item-attachment-${index}">
+                <div class="mt-1" id="item-attachment-preview-${index}"></div>
+            </td>
+            <td>
                 <input type="number" step="0.01" class="form-control item-rate" placeholder="0.00">
             </td>
             <td class="text-center align-middle">
@@ -483,6 +493,39 @@
             tr.querySelector('.item-search'),
             tr.querySelector('.item-code-val')
         );
+    }
+
+    function uploadItemAttachment(inputEl, index) {
+        if (!inputEl.files || !inputEl.files[0]) return;
+        let file = inputEl.files[0];
+        let previewDiv = document.getElementById('item-attachment-preview-' + index);
+        let hiddenInput = document.getElementById('item-attachment-' + index);
+        
+        previewDiv.innerHTML = '<small class="text-info">Uploading...</small>';
+        
+        let formData = new FormData();
+        formData.append("file", file, file.name);
+        formData.append("is_private", 0);
+        formData.append("folder", "Home/Attachments");
+
+        frappe.call({
+            method: "upload_file",
+            args: {
+                from_form: 1
+            },
+            type: "POST",
+            processData: false,
+            contentType: false,
+            data: formData,
+            callback: function(r) {
+                if (r.message && r.message.file_url) {
+                    hiddenInput.value = r.message.file_url;
+                    previewDiv.innerHTML = `<a href="${r.message.file_url}" target="_blank" class="small text-success"><i class="fa fa-check"></i> Uploaded</a>`;
+                } else {
+                    previewDiv.innerHTML = '<small class="text-danger">Upload failed.</small>';
+                }
+            }
+        });
     }
 
     function deleteManualRow(btn) {
@@ -512,8 +555,15 @@
             let row = tbody.rows[i];
             let itemCode = row.querySelector('.item-code-val').value;
             let rate = row.querySelector('.item-rate').value;
+            let desc = row.querySelector('.item-desc').value;
+            let attachment = row.querySelector('.item-attachment-val').value;
             if (itemCode && rate) {
-                items.push({ item_code: itemCode, rate: rate });
+                items.push({ 
+                    item_code: itemCode, 
+                    rate: rate,
+                    description: desc,
+                    attachment: attachment
+                });
             }
         }
 
@@ -565,9 +615,11 @@
                                 <table class="table table-sm table-bordered">
                                     <thead class="bg-light">
                                         <tr>
-                                            <th>Item Code</th>
-                                            <th>Item Name</th>
-                                            <th class="text-right">Rate</th>
+                                            <th width="20%">Item Code</th>
+                                            <th width="30%">Item Name</th>
+                                            <th width="30%">Description</th>
+                                            <th width="10%">File</th>
+                                            <th width="10%" class="text-right">Rate</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -577,6 +629,8 @@
                                         <tr>
                                             <td>${item.item_code}</td>
                                             <td>${item.item_name}</td>
+                                            <td><small>${item.description || ''}</small></td>
+                                            <td>${item.attachment ? `<a href="${item.attachment}" target="_blank" class="badge badge-info"><i class="fa fa-paperclip"></i> View</a>` : ''}</td>
                                             <td class="text-right font-weight-bold">₹${parseFloat(item.rate).toFixed(2)}</td>
                                         </tr>
                             `;
