@@ -479,12 +479,10 @@
             </td>
         `;
         tbody.appendChild(tr);
-        setTimeout(function() {
-            initSearchInput(
-                document.getElementById('item-search-' + index),
-                document.getElementById('item-code-' + index)
-            );
-        }, 50);
+        initSearchInput(
+            tr.querySelector('.item-search'),
+            tr.querySelector('.item-code-val')
+        );
     }
 
     function deleteManualRow(btn) {
@@ -606,8 +604,8 @@
         tr.innerHTML = `
             <td>
                 <div class="item-search-wrapper">
-                    <input type="text" class="form-control" id="q-search-${index}" placeholder="Search Item..." autocomplete="off">
-                    <input type="hidden" class="q-item-code-val" id="q-code-${index}">
+                    <input type="text" class="form-control q-item-search" placeholder="Search Item..." autocomplete="off">
+                    <input type="hidden" class="q-item-code-val">
                 </div>
             </td>
             <td>
@@ -623,13 +621,10 @@
             </td>
         `;
         tbody.appendChild(tr);
-
-        setTimeout(function() {
-            initSearchInput(
-                document.getElementById('q-search-' + index),
-                document.getElementById('q-code-' + index)
-            );
-        }, 50);
+        initSearchInput(
+            tr.querySelector('.q-item-search'),
+            tr.querySelector('.q-item-code-val')
+        );
     }
 
     function submitProactiveQuotation() {
