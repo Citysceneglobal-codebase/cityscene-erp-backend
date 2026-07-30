@@ -126,6 +126,35 @@
     .awesomplete {
         width: 100% !important;
     }
+
+    /* File Upload styling */
+    .custom-file-upload {
+        display: inline-block;
+        padding: 6px 12px;
+        cursor: pointer;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        background-color: #f8f9fa;
+        color: #495057;
+        font-size: 13px;
+        transition: all 0.2s;
+        white-space: nowrap;
+        width: 100%;
+        text-align: center;
+    }
+    .custom-file-upload:hover {
+        background-color: #e2e6ea;
+        border-color: #dae0e5;
+    }
+    .custom-file-upload input[type="file"] {
+        display: none;
+    }
+    .file-status-text {
+        font-size: 11px;
+        margin-top: 4px;
+        display: block;
+        text-align: center;
+    }
 </style>
 
 <div class="supplier-dashboard">
@@ -274,12 +303,12 @@
             <!-- Manual Tab -->
             <div class="tab-pane fade" id="manual" role="tabpanel">
                 <table class="table table-bordered" id="manual-items-table">
-                    <thead>
+                    <thead class="bg-light text-secondary">
                         <tr>
-                            <th width="25%">Item Search</th>
-                            <th width="30%">Description</th>
-                            <th width="20%">Attachment</th>
-                            <th width="15%">Rate</th>
+                            <th width="30%" class="font-weight-bold" style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Item Search</th>
+                            <th width="30%" class="font-weight-bold" style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Description</th>
+                            <th width="15%" class="font-weight-bold" style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Attachment</th>
+                            <th width="15%" class="font-weight-bold" style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Rate</th>
                             <th width="10%"></th>
                         </tr>
                     </thead>
@@ -465,26 +494,29 @@
         let index = manualRowCounter++;
         let tr = document.createElement('tr');
         tr.innerHTML = `
-            <td>
-                <div class="item-search-wrapper">
-                    <input type="text" class="form-control item-search" id="item-search-${index}" placeholder="Search Item Code or Name..." autocomplete="off">
+            <td class="align-middle" style="padding: 12px;">
+                <div class="item-search-wrapper mb-0">
+                    <input type="text" class="form-control form-control-sm item-search" id="item-search-${index}" placeholder="Search Code/Name..." autocomplete="off">
                     <input type="hidden" class="item-code-val" id="item-code-${index}">
                 </div>
             </td>
-            <td>
-                <textarea class="form-control item-desc" rows="1" placeholder="Optional description..."></textarea>
+            <td class="align-middle" style="padding: 12px;">
+                <input type="text" class="form-control form-control-sm item-desc" placeholder="Optional notes...">
             </td>
-            <td>
-                <input type="file" class="form-control-file item-file-input" style="font-size: 12px;" onchange="uploadItemAttachment(this, ${index})">
+            <td class="align-middle" style="padding: 12px;">
+                <label class="custom-file-upload mb-0">
+                    <i class="fa fa-upload text-primary"></i> Upload
+                    <input type="file" class="item-file-input" onchange="uploadItemAttachment(this, ${index})">
+                </label>
                 <input type="hidden" class="item-attachment-val" id="item-attachment-${index}">
-                <div class="mt-1" id="item-attachment-preview-${index}"></div>
+                <div class="file-status-text" id="item-attachment-preview-${index}"></div>
             </td>
-            <td>
-                <input type="number" step="0.01" class="form-control item-rate" placeholder="0.00">
+            <td class="align-middle" style="padding: 12px;">
+                <input type="number" step="0.01" class="form-control form-control-sm item-rate" placeholder="0.00">
             </td>
-            <td class="text-center align-middle">
-                <button class="btn btn-sm btn-light text-danger" onclick="deleteManualRow(this)" style="border-radius: 50%; width: 30px; height: 30px; padding: 0; line-height: 28px; border: 1px solid #ffcccc; font-size: 18px;">
-                    &times;
+            <td class="text-center align-middle" style="padding: 12px;">
+                <button class="btn btn-sm btn-light text-danger" onclick="deleteManualRow(this)" style="border-radius: 50%; width: 28px; height: 28px; padding: 0; line-height: 26px; border: 1px solid #ffcccc; font-size: 16px; background-color: #fff;">
+                    <i class="fa fa-times"></i>
                 </button>
             </td>
         `;
@@ -520,7 +552,9 @@
             callback: function(r) {
                 if (r.message && r.message.file_url) {
                     hiddenInput.value = r.message.file_url;
-                    previewDiv.innerHTML = `<a href="${r.message.file_url}" target="_blank" class="small text-success"><i class="fa fa-check"></i> Uploaded</a>`;
+                    let filename = file.name;
+                    if(filename.length > 15) filename = filename.substring(0, 12) + '...';
+                    previewDiv.innerHTML = `<a href="${r.message.file_url}" target="_blank" class="text-success text-decoration-none" title="${file.name}"><i class="fa fa-check"></i> ${filename}</a>`;
                 } else {
                     previewDiv.innerHTML = '<small class="text-danger">Upload failed.</small>';
                 }
