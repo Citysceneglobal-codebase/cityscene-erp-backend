@@ -543,7 +543,8 @@
             method: 'POST',
             headers: {
                 'X-Frappe-CSRF-Token': frappe.csrf_token,
-                'Accept': 'application/json'
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
             },
             body: formData
         })
