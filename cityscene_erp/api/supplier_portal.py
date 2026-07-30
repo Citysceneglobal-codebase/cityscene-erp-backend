@@ -140,6 +140,8 @@ def create_manual_rate_list(valid_from: str, items: str, valid_upto: str = None)
     if isinstance(items, str):
         items = json.loads(items)
         
+    frappe.log_error(message=f"Received items: {items}", title="Supplier Portal Manual List Debug")
+        
     if not items:
         frappe.throw(_("No items provided."))
         
@@ -159,7 +161,8 @@ def create_manual_rate_list(valid_from: str, items: str, valid_upto: str = None)
             row_data["description"] = item.get("description") or ""
             row_data["attachment"] = item.get("attachment") or ""
             doc.append("items", row_data)
-        except Exception:
+        except Exception as e:
+            frappe.log_error(message=f"Failed to append description/attachment. Error: {str(e)}", title="Supplier Portal Manual List Debug")
             del row_data["description"]
             del row_data["attachment"]
             doc.append("items", row_data)
