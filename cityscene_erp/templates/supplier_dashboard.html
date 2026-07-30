@@ -539,11 +539,11 @@
         formData.append("file", file, file.name);
         formData.append("is_private", 0);
         formData.append("folder", "Home/Attachments");
-
-        fetch('/api/method/upload_file', {
+        fetch('/api/method/cityscene_erp.api.supplier_portal.upload_supplier_attachment', {
             method: 'POST',
             headers: {
-                'X-Frappe-CSRF-Token': frappe.csrf_token
+                'X-Frappe-CSRF-Token': frappe.csrf_token,
+                'Accept': 'application/json'
             },
             body: formData
         })

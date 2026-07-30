@@ -172,6 +172,38 @@ def create_manual_rate_list(valid_from: str, items: str, valid_upto: str = None)
     return {"status": "success", "docname": doc.name}
 
 @frappe.whitelist()
+def upload_supplier_attachment():
+    supplier = get_supplier()
+    if not supplier:
+        frappe.throw(_("Could not identify the Supplier."))
+    
+    if "file" not in frappe.request.files:
+        frappe.throw(_("No file uploaded."))
+        
+    file = frappe.request.files["file"]
+    filename = file.filename
+    content = file.stream.read()
+    
+    import mimetypes
+    filetype = mimetypes.guess_type(filename)[0]
+    
+    # Optional basic validation
+    # if filetype and filetype not in ["image/png", "image/jpeg", "application/pdf"]:
+    #    frappe.throw(_("Only images and PDFs are allowed."))
+        
+    doc = frappe.get_doc({
+        "doctype": "File",
+        "file_name": filename,
+        "is_private": 0,
+        "content": content,
+        "folder": "Home/Attachments"
+    })
+    doc.save(ignore_permissions=True)
+    frappe.db.commit()
+    
+    return {"file_url": doc.file_url}
+
+@frappe.whitelist()
 def get_active_supplier_rates(items: str):
     supplier = get_supplier()
     if not supplier:
