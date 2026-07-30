@@ -540,25 +540,32 @@
         formData.append("is_private", 0);
         formData.append("folder", "Home/Attachments");
 
-        frappe.call({
-            method: "upload_file",
-            args: {
-                from_form: 1
+        fetch('/api/method/upload_file', {
+            method: 'POST',
+            headers: {
+                'X-Frappe-CSRF-Token': frappe.csrf_token
             },
-            type: "POST",
-            processData: false,
-            contentType: false,
-            data: formData,
-            callback: function(r) {
-                if (r.message && r.message.file_url) {
-                    hiddenInput.value = r.message.file_url;
-                    let filename = file.name;
-                    if(filename.length > 15) filename = filename.substring(0, 12) + '...';
-                    previewDiv.innerHTML = `<a href="${r.message.file_url}" target="_blank" class="text-success text-decoration-none" title="${file.name}"><i class="fa fa-check"></i> ${filename}</a>`;
-                } else {
-                    previewDiv.innerHTML = '<small class="text-danger">Upload failed.</small>';
-                }
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Upload failed');
             }
+            return response.json();
+        })
+        .then(r => {
+            if (r.message && r.message.file_url) {
+                hiddenInput.value = r.message.file_url;
+                let filename = file.name;
+                if(filename.length > 15) filename = filename.substring(0, 12) + '...';
+                previewDiv.innerHTML = `<a href="${r.message.file_url}" target="_blank" class="text-success text-decoration-none" title="${file.name}"><i class="fa fa-check"></i> ${filename}</a>`;
+            } else {
+                previewDiv.innerHTML = '<small class="text-danger">Upload failed.</small>';
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            previewDiv.innerHTML = '<small class="text-danger">Upload failed.</small>';
         });
     }
 
