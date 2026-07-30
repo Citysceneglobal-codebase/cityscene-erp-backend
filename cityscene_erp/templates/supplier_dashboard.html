@@ -1,6 +1,41 @@
-<!-- Awesomplete for search dropdowns -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/awesomplete/1.1.5/awesomplete.min.css" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/awesomplete/1.1.5/awesomplete.min.js"></script>
+<!-- Custom item search dropdown styles -->
+<style>
+    .item-dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: #fff;
+        border: 1px solid #ced4da;
+        border-top: none;
+        border-radius: 0 0 6px 6px;
+        max-height: 240px;
+        overflow-y: auto;
+        z-index: 99999;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+        display: none;
+    }
+    .item-dropdown .item-option {
+        padding: 8px 12px;
+        cursor: pointer;
+        border-bottom: 1px solid #f0f0f0;
+        font-size: 14px;
+    }
+    .item-dropdown .item-option:hover,
+    .item-dropdown .item-option.active {
+        background: #f0f6ff;
+    }
+    .item-dropdown .item-option strong { display: block; }
+    .item-dropdown .item-option small { color: #6c757d; }
+    .item-dropdown .no-results {
+        padding: 10px 12px;
+        color: #6c757d;
+        font-size: 13px;
+    }
+    .item-search-wrapper {
+        position: relative;
+    }
+</style>
 
 <style>
     /* Fix for dropdowns being cut off by table-responsive or going under buttons */
@@ -336,6 +371,92 @@
         addManualRow();
     });
 
+    function initSearchInput(inputEl, hiddenEl) {
+        // Create dropdown
+        let dropdown = document.createElement('div');
+        dropdown.className = 'item-dropdown';
+        inputEl.parentNode.style.position = 'relative';
+        inputEl.parentNode.appendChild(dropdown);
+
+        let searchTimer = null;
+        let currentResults = [];
+        let activeIndex = -1;
+
+        function showDropdown(results) {
+            currentResults = results;
+            activeIndex = -1;
+            dropdown.innerHTML = '';
+            if (!results.length) {
+                dropdown.innerHTML = '<div class="no-results">No items found</div>';
+            } else {
+                results.forEach(function(item, i) {
+                    let div = document.createElement('div');
+                    div.className = 'item-option';
+                    div.innerHTML = '<strong>' + item.item_code + '</strong><small>' + (item.item_name || '') + '</small>';
+                    div.addEventListener('mousedown', function(e) {
+                        e.preventDefault();
+                        selectItem(item);
+                    });
+                    dropdown.appendChild(div);
+                });
+            }
+            dropdown.style.display = 'block';
+        }
+
+        function selectItem(item) {
+            inputEl.value = item.item_code;
+            hiddenEl.value = item.item_code;
+            dropdown.style.display = 'none';
+        }
+
+        function doSearch() {
+            let term = inputEl.value || '';
+            fetch('/api/method/cityscene_erp.api.supplier_portal.get_all_items?search_term=' + encodeURIComponent(term) + '&_t=' + Date.now(), {
+                headers: { 'X-Frappe-CSRF-Token': frappe.csrf_token }
+            })
+            .then(function(res) { return res.json(); })
+            .then(function(data) {
+                if (data.message && Array.isArray(data.message)) {
+                    showDropdown(data.message);
+                }
+            })
+            .catch(function() {});
+        }
+
+        inputEl.addEventListener('input', function() {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(doSearch, 300);
+        });
+
+        inputEl.addEventListener('focus', function() {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(doSearch, 100);
+        });
+
+        inputEl.addEventListener('blur', function() {
+            setTimeout(function() { dropdown.style.display = 'none'; }, 250);
+        });
+
+        inputEl.addEventListener('keydown', function(e) {
+            let opts = dropdown.querySelectorAll('.item-option');
+            if (!opts.length) return;
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                activeIndex = Math.min(activeIndex + 1, opts.length - 1);
+                opts.forEach(function(o, i) { o.classList.toggle('active', i === activeIndex); });
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                activeIndex = Math.max(activeIndex - 1, 0);
+                opts.forEach(function(o, i) { o.classList.toggle('active', i === activeIndex); });
+            } else if (e.key === 'Enter' && activeIndex >= 0) {
+                e.preventDefault();
+                selectItem(currentResults[activeIndex]);
+            } else if (e.key === 'Escape') {
+                dropdown.style.display = 'none';
+            }
+        });
+    }
+
     let manualRowCounter = 0;
     function addManualRow() {
         let tbody = document.getElementById('manual-items-body');
@@ -343,7 +464,7 @@
         let tr = document.createElement('tr');
         tr.innerHTML = `
             <td>
-                <div class="position-relative">
+                <div class="item-search-wrapper">
                     <input type="text" class="form-control item-search" id="item-search-${index}" placeholder="Search Item Code or Name..." autocomplete="off">
                     <input type="hidden" class="item-code-val" id="item-code-${index}">
                 </div>
@@ -358,69 +479,12 @@
             </td>
         `;
         tbody.appendChild(tr);
-
-        // Initialize Awesomplete robustly
-        setTimeout(() => {
-            let input = document.getElementById(`item-search-${index}`);
-            let hiddenInput = document.getElementById(`item-code-${index}`);
-            
-            let awesomplete = new Awesomplete(input, {
-                minChars: 0,
-                maxItems: 15,
-                autoFirst: true,
-                list: [],
-                data: function (item, input) {
-                    return { label: item.label, value: item.value };
-                },
-                filter: function() { return true; }, // Backend handles filtering
-                item: function(text, input) {
-                    let li = document.createElement("li");
-                    li.innerHTML = text.label;
-                    li.className = "p-2 border-bottom";
-                    li.style.cursor = "pointer";
-                    li.setAttribute("aria-selected", "false");
-                    return li;
-                }
-            });
-
-            let searchTimeout = null;
-            function fetchItems() {
-                if (searchTimeout) clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(() => {
-                    frappe.call({
-                        method: "cityscene_erp.api.supplier_portal.get_all_items",
-                        args: { search_term: input.value || "", _t: Date.now() },
-                        callback: function(r) {
-                            if (r.message && Array.isArray(r.message)) {
-                                let items = r.message.map(i => ({
-                                    label: `<strong>${i.item_code}</strong><br><small class="text-muted">${i.item_name}</small>`,
-                                    value: i.item_code
-                                }));
-                                awesomplete.list = items;
-                                // Force evaluate and open to ensure visibility
-                                awesomplete.evaluate();
-                                awesomplete.open();
-                            }
-                        }
-                    });
-                }, 300);
-            }
-
-            input.addEventListener("input", fetchItems);
-            // On focus, always fetch to refresh the list and forcefully open the dropdown
-            input.addEventListener("focus", fetchItems);
-
-            // When an item is selected
-            input.addEventListener("awesomplete-selectcomplete", function(e) {
-                hiddenInput.value = e.text.value;
-                input.value = e.text.value;
-            });
-            
-            // Fix sticky dropdowns on blur
-            input.addEventListener("blur", function() {
-                setTimeout(() => { awesomplete.close(); }, 200);
-            });
-        }, 100);
+        setTimeout(function() {
+            initSearchInput(
+                document.getElementById('item-search-' + index),
+                document.getElementById('item-code-' + index)
+            );
+        }, 50);
     }
 
     function deleteManualRow(btn) {
@@ -541,10 +605,9 @@
         let tr = document.createElement('tr');
         tr.innerHTML = `
             <td>
-                <div class="position-relative">
+                <div class="item-search-wrapper">
                     <input type="text" class="form-control" id="q-search-${index}" placeholder="Search Item..." autocomplete="off">
                     <input type="hidden" class="q-item-code-val" id="q-code-${index}">
-                    <i class="fa fa-search position-absolute text-muted" style="right: 10px; top: 12px;"></i>
                 </div>
             </td>
             <td>
@@ -561,60 +624,12 @@
         `;
         tbody.appendChild(tr);
 
-        setTimeout(() => {
-            let input = document.getElementById(`q-search-${index}`);
-            let hiddenInput = document.getElementById(`q-code-${index}`);
-            
-            let awesomplete = new Awesomplete(input, {
-                minChars: 0, 
-                maxItems: 15, 
-                autoFirst: true,
-                list: [],
-                data: function (item, input) { return { label: item.label, value: item.value }; },
-                filter: function() { return true; }, 
-                item: function(text, input) {
-                    let li = document.createElement("li");
-                    li.innerHTML = text.label;
-                    li.className = "p-2 border-bottom";
-                    li.style.cursor = "pointer";
-                    li.setAttribute("aria-selected", "false");
-                    return li;
-                }
-            });
-
-            let searchTimeout = null;
-            function fetchItems() {
-                if (searchTimeout) clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(() => {
-                    frappe.call({
-                        method: 'cityscene_erp.api.supplier_portal.get_all_items',
-                        args: { search_term: input.value || "", _t: Date.now() },
-                        callback: function(r) {
-                            if (r.message && Array.isArray(r.message)) {
-                                awesomplete.list = r.message.map(i => ({
-                                    label: `<strong>${i.item_code}</strong><br><small class="text-muted">${i.item_name}</small>`,
-                                    value: i.item_code
-                                }));
-                                awesomplete.evaluate();
-                                awesomplete.open();
-                            }
-                        }
-                    });
-                }, 300);
-            }
-
-            input.addEventListener('input', fetchItems);
-            input.addEventListener('focus', fetchItems);
-
-            input.addEventListener('awesomplete-selectcomplete', function(e) {
-                hiddenInput.value = e.text.value;
-                input.value = e.text.value; 
-            });
-            
-            input.addEventListener("blur", function() {
-                setTimeout(() => { awesomplete.close(); }, 200);
-            });
-        }, 100);
+        setTimeout(function() {
+            initSearchInput(
+                document.getElementById('q-search-' + index),
+                document.getElementById('q-code-' + index)
+            );
+        }, 50);
     }
 
     function submitProactiveQuotation() {
