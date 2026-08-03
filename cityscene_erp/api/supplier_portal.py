@@ -172,35 +172,32 @@ def create_manual_rate_list(valid_from: str, items: str, valid_upto: str = None)
     return {"status": "success", "docname": doc.name}
 
 @frappe.whitelist()
-def upload_supplier_attachment():
+def upload_supplier_attachment(filename: str, filecontent: str, mimetype: str = ""):
+    """
+    Accepts a base64-encoded file sent via frappe.call.
+    Returns the public file URL.
+    """
     supplier = get_supplier()
     if not supplier:
         frappe.throw(_("Could not identify the Supplier."))
-    
-    if "file" not in frappe.request.files:
-        frappe.throw(_("No file uploaded."))
-        
-    file = frappe.request.files["file"]
-    filename = file.filename
-    content = file.stream.read()
-    
-    import mimetypes
-    filetype = mimetypes.guess_type(filename)[0]
-    
-    # Optional basic validation
-    # if filetype and filetype not in ["image/png", "image/jpeg", "application/pdf"]:
-    #    frappe.throw(_("Only images and PDFs are allowed."))
-        
+
+    import base64
+
+    try:
+        content_bytes = base64.b64decode(filecontent)
+    except Exception:
+        frappe.throw(_("Invalid file content."))
+
     doc = frappe.get_doc({
         "doctype": "File",
         "file_name": filename,
         "is_private": 0,
-        "content": content,
+        "content": content_bytes,
         "folder": "Home/Attachments"
     })
     doc.save(ignore_permissions=True)
     frappe.db.commit()
-    
+
     return {"file_url": doc.file_url}
 
 @frappe.whitelist()
@@ -310,3 +307,97 @@ def submit_proactive_quotation(items):
     doc.submit()
     
     return doc.name
+
+@frappe.whitelist(allow_guest=True)
+def register_new_supplier(company_name: str, contact_name: str, email: str, phone: str, gstin: str = None, pan: str = None, address_line1: str = None, address_line2: str = None, city: str = None, state: str = None, pincode: str = None):
+    if not company_name or not contact_name or not email or not phone:
+        frappe.throw(_("Company Name, Contact Name, Email, and Phone are required fields."))
+        
+    if frappe.db.exists("User", email):
+        frappe.throw(_("User with email {0} already exists. Please log in or use a different email.").format(email))
+
+    # Generate a random password
+    password = frappe.generate_hash(length=10)
+
+    # 1. Create Supplier
+    supplier = frappe.get_doc({
+        "doctype": "Supplier",
+        "supplier_name": company_name,
+        "supplier_group": "All Supplier Groups",
+        "supplier_type": "Company",
+        "pan": pan,
+        "gst_category": "Registered Regular" if gstin else "Unregistered",
+        "tax_id": gstin
+    })
+    supplier.insert(ignore_permissions=True)
+
+    # 2. Create Address
+    if address_line1 and city:
+        address = frappe.get_doc({
+            "doctype": "Address",
+            "address_title": company_name,
+            "address_type": "Billing",
+            "address_line1": address_line1,
+            "address_line2": address_line2,
+            "city": city,
+            "state": state,
+            "pincode": pincode,
+            "country": "India", # Defaulting to India
+            "links": [{"link_doctype": "Supplier", "link_name": supplier.name}]
+        })
+        address.insert(ignore_permissions=True)
+
+    # 3. Create Contact
+    contact = frappe.get_doc({
+        "doctype": "Contact",
+        "first_name": contact_name,
+        "email_id": email,
+        "phone": phone,
+        "is_primary_contact": 1,
+        "links": [{"link_doctype": "Supplier", "link_name": supplier.name}]
+    })
+    contact.insert(ignore_permissions=True)
+
+    # 4. Create User
+    user = frappe.get_doc({
+        "doctype": "User",
+        "email": email,
+        "first_name": contact_name,
+        "send_welcome_email": 0,
+        "new_password": password,
+        "roles": [{"role": "Supplier"}]
+    })
+    user.flags.no_welcome_mail = True
+    user.insert(ignore_permissions=True)
+
+    # Link Contact to User
+    frappe.db.set_value("Contact", contact.name, "user", user.name)
+    
+    # 5. Send Email with Credentials
+    email_message = f"""
+    <p>Dear {contact_name},</p>
+    <p>Welcome to our Supplier Portal! Your registration has been successful.</p>
+    <p>Here are your login credentials:</p>
+    <ul>
+        <li><b>Login ID:</b> {email}</li>
+        <li><b>Password:</b> {password}</li>
+    </ul>
+    <p>Please log in and update your profile.</p>
+    """
+    try:
+        frappe.sendmail(
+            recipients=[email],
+            subject="Welcome to Supplier Portal",
+            message=email_message,
+            now=True
+        )
+    except Exception as e:
+        frappe.log_error(message=frappe.get_traceback(), title="Supplier Registration Email Failed")
+
+    frappe.db.commit()
+
+    return {
+        "email": email,
+        "password": password,
+        "supplier_name": supplier.name
+    }

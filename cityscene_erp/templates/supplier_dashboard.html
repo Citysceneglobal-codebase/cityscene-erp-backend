@@ -443,9 +443,25 @@
         function doSearch() {
             let term = inputEl.value || '';
             fetch('/api/method/cityscene_erp.api.supplier_portal.get_all_items?search_term=' + encodeURIComponent(term) + '&_t=' + Date.now(), {
-                headers: { 'X-Frappe-CSRF-Token': frappe.csrf_token }
+                headers: { 
+                    'X-Frappe-CSRF-Token': frappe.csrf_token,
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
             })
-            .then(function(res) { return res.json(); })
+            .then(async function(res) { 
+                const text = await res.text();
+                if (!res.ok) {
+                    console.error("API Error Response:", text);
+                    throw new Error('Unauthorized or API Error');
+                }
+                try {
+                    return JSON.parse(text);
+                } catch (e) {
+                    console.error("Server did not return JSON. It returned:", text);
+                    throw e;
+                }
+            })
             .then(function(data) {
                 if (data.message && Array.isArray(data.message)) {
                     showDropdown(data.message);
@@ -532,42 +548,42 @@
         let file = inputEl.files[0];
         let previewDiv = document.getElementById('item-attachment-preview-' + index);
         let hiddenInput = document.getElementById('item-attachment-' + index);
-        
+
         previewDiv.innerHTML = '<small class="text-info">Uploading...</small>';
-        
-        let formData = new FormData();
-        formData.append("file", file, file.name);
-        formData.append("is_private", 0);
-        formData.append("folder", "Home/Attachments");
-        fetch('/api/method/cityscene_erp.api.supplier_portal.upload_supplier_attachment', {
-            method: 'POST',
-            headers: {
-                'X-Frappe-CSRF-Token': frappe.csrf_token,
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: formData
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Upload failed');
-            }
-            return response.json();
-        })
-        .then(r => {
-            if (r.message && r.message.file_url) {
-                hiddenInput.value = r.message.file_url;
-                let filename = file.name;
-                if(filename.length > 15) filename = filename.substring(0, 12) + '...';
-                previewDiv.innerHTML = `<a href="${r.message.file_url}" target="_blank" class="text-success text-decoration-none" title="${file.name}"><i class="fa fa-check"></i> ${filename}</a>`;
-            } else {
-                previewDiv.innerHTML = '<small class="text-danger">Upload failed.</small>';
-            }
-        })
-        .catch(err => {
-            console.error(err);
-            previewDiv.innerHTML = '<small class="text-danger">Upload failed.</small>';
-        });
+
+        let reader = new FileReader();
+        reader.onload = function(e) {
+            let fileContent = e.target.result;
+            // fileContent is like "data:image/png;base64,ABC123..."
+            let b64 = fileContent.split(",")[1];
+            let mimeType = fileContent.split(";")[0].split(":")[1];
+
+            frappe.call({
+                method: "cityscene_erp.api.supplier_portal.upload_supplier_attachment",
+                args: {
+                    filename: file.name,
+                    filecontent: b64,
+                    mimetype: mimeType
+                },
+                callback: function(r) {
+                    if (r.message && r.message.file_url) {
+                        hiddenInput.value = r.message.file_url;
+                        let filename = file.name;
+                        if (filename.length > 15) filename = filename.substring(0, 12) + '...';
+                        previewDiv.innerHTML = '<a href="' + r.message.file_url + '" target="_blank" class="text-success text-decoration-none" title="' + file.name + '"><i class="fa fa-check"></i> ' + filename + '</a>';
+                    } else {
+                        previewDiv.innerHTML = '<small class="text-danger">Upload failed.</small>';
+                    }
+                },
+                error: function() {
+                    previewDiv.innerHTML = '<small class="text-danger">Upload failed.</small>';
+                }
+            });
+        };
+        reader.onerror = function() {
+            previewDiv.innerHTML = '<small class="text-danger">Could not read file.</small>';
+        };
+        reader.readAsDataURL(file);
     }
 
     function deleteManualRow(btn) {
