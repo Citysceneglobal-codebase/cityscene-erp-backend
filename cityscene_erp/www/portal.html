@@ -13,6 +13,15 @@
 {% if not doctype %}
     {% if is_supplier %}
         {% include "cityscene_erp/templates/supplier_dashboard.html" %}
+    {% elif is_partner %}
+        {% include "cityscene_erp/templates/partner_dashboard.html" %}
+    {% elif is_pending_partner %}
+        <div class="container mt-5 pt-5 text-center">
+            <i class="fa fa-clock-o text-warning mb-4" style="font-size: 5rem;"></i>
+            <h2 class="mb-3">Verification Pending</h2>
+            <p class="lead text-muted">Your Channel Partner account is currently being verified by our team.</p>
+            <p>You will be notified via email once your account is approved and activated.</p>
+        </div>
     {% else %}
         <div>Welcome to the Portal</div>
     {% endif %}

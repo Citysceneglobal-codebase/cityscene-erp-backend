@@ -1,0 +1,111 @@
+{% from "frappe/templates/includes/avatar_macro.html" import avatar %}
+{% extends "templates/web.html" %}
+
+{% block navbar %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block title %}
+{% if is_pending_partner %}
+{{ _("Verification Pending") }}
+{% else %}
+{{ _("My Account") }}
+{% endif %}
+{% endblock %}
+
+{% block page_content %}
+<style>
+	body {
+		background-color: var(--subtle-fg);
+		font-size: var(--text-base);
+	}
+</style>
+
+{% if is_pending_partner %}
+	<div class="container mt-5 pt-5 text-center" style="background-color: #fff; padding: 40px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+		<i class="fa fa-clock-o text-warning mb-4" style="font-size: 5rem;"></i>
+		<h2 class="mb-3">Verification Pending</h2>
+		<p class="lead text-muted">Your Channel Partner account is currently being verified by our team.</p>
+		<p>You will be notified via email once your account is approved and activated.</p>
+		<div class="mt-4">
+			<a href="/logout" class="btn btn-primary">Logout</a>
+		</div>
+	</div>
+{% else %}
+<div class="portal-container">
+	<div class="portal-section head">
+		<div class="title">{{_("Settings")}}</div>
+		<div>
+			<span class="my-account-avatar">
+				{{avatar(current_user.name)}}
+			</span>
+			<span class="my-account-name ml-2">
+				{{current_user.full_name | e}}
+			</span>
+		</div>
+	</div>
+	<div class="portal-items">
+		<div class="portal-section">
+			<span class="my-account-item-link">
+				<a href="/update-profile/{{ user }}">
+					<svg class="edit-profile-icon icon icon-md">
+						<use href="#icon-edit"></use>
+					</svg>
+					<span class="item-link-text">
+						{{_("Edit Profile") }}
+					</span>
+				</a>
+			</span>
+		</div>
+
+		<div class="portal-section">
+			<span class="my-account-item-link">
+				<a href="/update-password">
+					<svg class="right-icon icon icon-md"><use href="#icon-lock"></use></svg>
+					<span class="item-link-text">{{_("Reset Password") }}</span>
+				</a>
+			</span>
+		</div>
+		<div class="portal-section">
+			<span class="my-account-item-link">
+				<a href="/third_party_apps">
+					<svg class="right-icon icon icon-md"><use href="#icon-web"></use></svg>
+					<span class="item-link-text">{{_("Manage 3rd party apps") }}</span>
+				</a>
+			</span>
+		</div>
+		{% if frappe.db.get_single_value("Website Settings", "show_account_deletion_link") %}
+		<div class="portal-section">
+			<span class="my-account-item-link">
+				<a href="/request-for-account-deletion?new=1">
+					<svg class="icon icon-md"><use href="#icon-trash"></use></svg>
+					<span class="item-link-text">{{_("Delete Account") }}</span>
+				</a>
+			</span>
+		</div>
+		{% endif %}
+	</div>
+</div>
+
+<div class="portal-footer">
+	<a href="/">
+		<svg class="right-icon icon icon-md"><use href="#icon-home"></use></svg>
+		{{ _("Home") }}
+	</a>
+	{% if is_portal_user %}
+	<a href="/portal">
+		<svg class="right-icon icon icon-md"><use href="#icon-website"></use></svg>
+		{{ _("Portal") }}
+	</a>
+	{% else %}
+		<a href="/desk">
+		<svg class="right-icon icon icon-md"><use href="#icon-grid"></use></svg>
+		{{ _("Desktop") }}
+	</a>
+	{% endif %}
+	<a href="/logout">
+		<svg class="right-icon icon icon-md"><use href="#icon-logout"></use></svg>
+		{{ _("Logout") }}
+	</a>
+</div>
+{% endif %}
+{% endblock %}

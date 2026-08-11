@@ -87,3 +87,25 @@ def ensure_supplier_role_for_contact(doc, method=None):
         except Exception as e:
             pass
 
+def check_partner_approval(doc, method=None):
+    """
+    Hook for on_update on Sales Partner to ensure users linked to an Approved Partner get the 'Channel Partner' role.
+    """
+    if getattr(doc, "custom_approval_status", None) == "Approved":
+        contacts = frappe.db.get_all("Dynamic Link", 
+            {"link_doctype": "Sales Partner", "link_name": doc.name, "parenttype": "Contact"},
+            pluck="parent")
+            
+        for contact_name in contacts:
+            user = frappe.db.get_value("Contact", contact_name, "user")
+            if user and user != "Guest":
+                try:
+                    user_doc = frappe.get_doc("User", user)
+                    if "Channel Partner" not in [r.role for r in user_doc.roles]:
+                        user_doc.add_roles("Channel Partner")
+                        
+                        # Optionally, if you wanted to send an email upon approval, you could do it here
+                        # frappe.sendmail(recipients=[user], subject="Partner Account Approved", message="Your Channel Partner account has been approved. You can now access the portal.")
+                except Exception as e:
+                    frappe.log_error(message=frappe.get_traceback(), title=f"Failed to add Channel Partner role to {user}")
+

@@ -62,9 +62,9 @@ web_include_js = "/assets/cityscene_erp/js/supplier_portal.js"
 # home_page = "login"
 
 # website user home page (by Role)
-# role_home_page = {
-# 	"Role": "home_page"
-# }
+role_home_page = {
+	"Channel Partner": "portal"
+}
 
 # Generators
 # ----------
@@ -140,6 +140,9 @@ doc_events = {
     },
     "Customer": {
         "after_insert": "cityscene_erp.api.party_automations.auto_create_ledger_for_party"
+    },
+    "Sales Partner": {
+        "on_update": "cityscene_erp.api.party_automations.check_partner_approval"
     },
     "Supplier": {
         "after_insert": "cityscene_erp.api.party_automations.auto_create_ledger_for_party",
@@ -217,6 +220,8 @@ override_doctype_dashboards = {
 # ----------------
 # before_request = ["cityscene_erp.utils.before_request"]
 # after_request = ["cityscene_erp.utils.after_request"]
+
+update_website_context = "cityscene_erp.api.partner_portal.check_pending_partner_redirect"
 
 # Job Events
 # ----------
