@@ -132,19 +132,39 @@ def get_partner():
     if user == "Guest":
         return None
         
-    # Find contact linked to user
-    contact = frappe.db.get_value("Contact", {"user": user})
-    if not contact:
-        return None
-        
-    # Find partner linked to contact
-    partner = frappe.db.get_value("Dynamic Link", {
-        "parent": contact,
-        "parenttype": "Contact",
-        "link_doctype": "Sales Partner"
-    }, "link_name")
+    # Find all contacts linked to user
+    contacts = frappe.get_all("Contact", filters={"user": user}, pluck="name")
     
-    return partner
+    for contact in contacts:
+        # Find partner linked to contact
+        partner = frappe.db.get_value("Dynamic Link", {
+            "parent": contact,
+            "parenttype": "Contact",
+            "link_doctype": "Sales Partner"
+        }, "link_name")
+        
+        if partner:
+            return partner
+            
+    return None
+
+@frappe.whitelist()
+def get_partner_lead(name):
+    partner = get_partner()
+    if not partner:
+        frappe.throw(_("Not associated with any Channel Partner account."))
+        
+    frappe.flags.ignore_permissions = True
+    try:
+        lead = frappe.get_doc("Lead", name)
+        if lead.custom_channel_partner != partner:
+            frappe.throw(_("You don't have permission to read this lead."))
+        
+        doc_dict = lead.as_dict()
+        doc_dict["documents"] = frappe.get_all("File", filters={"attached_to_doctype": "Lead", "attached_to_name": lead.name}, fields=["file_url", "file_name"], ignore_permissions=True)
+        return doc_dict
+    finally:
+        frappe.flags.ignore_permissions = False
 
 @frappe.whitelist()
 def get_partner_leads():
@@ -152,11 +172,11 @@ def get_partner_leads():
     if not partner:
         return {"leads": [], "stats": {"total": 0, "converted": 0}}
         
-    leads = frappe.get_all("Lead", filters={"custom_channel_partner": partner}, fields=["name", "lead_name", "first_name", "last_name", "email_id", "mobile_no", "status", "company_name"])
+    leads = frappe.get_all("Lead", filters={"custom_channel_partner": partner}, fields=["name", "lead_name", "first_name", "last_name", "email_id", "mobile_no", "status", "company_name"], ignore_permissions=True)
     
     # Get attachments for each lead
     for lead in leads:
-        files = frappe.get_all("File", filters={"attached_to_doctype": "Lead", "attached_to_name": lead.name}, fields=["file_url", "file_name"])
+        files = frappe.get_all("File", filters={"attached_to_doctype": "Lead", "attached_to_name": lead.name}, fields=["file_url", "file_name"], ignore_permissions=True)
         lead.documents = files
         
     converted = len([l for l in leads if l.status == "Converted"])
@@ -170,47 +190,26 @@ def get_partner_leads():
     }
 
 @frappe.whitelist()
-def create_lead(first_name, mobile_no, last_name="", email_id="", company_name="", city="", state="", country="", territory="", industry="", annual_revenue=0, no_of_employees="", 
-                custom_lead_category="", custom_project_type="", custom_capacity="", custom_requirement="", 
-                custom_address="", custom_roof_area=0, custom_roof_type="", 
-                custom_monthly_units=0, custom_monthly_bill=0, 
-                custom_inverter_brand="", custom_panel_brand="", custom_dcr_required=0, custom_subsidy_applicable=0,
-                file_name=None, file_content=None, mime_type=None):
+def create_lead(**kwargs):
     partner = get_partner()
     if not partner:
         frappe.throw(_("Not associated with any Channel Partner account."))
         
-    lead = frappe.get_doc({
-        "doctype": "Lead",
-        "first_name": first_name,
-        "last_name": last_name,
-        "email_id": email_id,
-        "mobile_no": mobile_no,
-        "company_name": company_name,
-        "city": city,
-        "state": state,
-        "country": country,
-        "territory": territory,
-        "industry": industry,
-        "annual_revenue": annual_revenue,
-        "no_of_employees": no_of_employees,
-        "custom_lead_category": custom_lead_category,
-        "custom_project_type": custom_project_type,
-        "custom_capacity": custom_capacity,
-        "custom_requirement": custom_requirement,
-        "custom_address": custom_address,
-        "custom_roof_area": custom_roof_area,
-        "custom_roof_type": custom_roof_type,
-        "custom_monthly_units": custom_monthly_units,
-        "custom_monthly_bill": custom_monthly_bill,
-        "custom_inverter_brand": custom_inverter_brand,
-        "custom_panel_brand": custom_panel_brand,
-        "custom_dcr_required": custom_dcr_required,
-        "custom_subsidy_applicable": custom_subsidy_applicable,
-        "custom_channel_partner": partner,
-        "status": "Lead" # or "Open", depending on what the standard initial status is. Frappe defaults to "Lead".
-    })
+    file_name = kwargs.pop("file_name", None)
+    file_content = kwargs.pop("file_content", None)
+    mime_type = kwargs.pop("mime_type", None)
+    kwargs.pop("cmd", None)
     
+    for key, value in kwargs.items():
+        if value == "":
+            kwargs[key] = None
+            
+    lead = frappe.new_doc("Lead")
+    lead.update(kwargs)
+    lead.custom_channel_partner = partner
+    if not lead.status:
+        lead.status = "Lead"
+        
     lead.insert(ignore_permissions=True)
     
     if file_content and file_name:
@@ -227,10 +226,7 @@ def create_lead(first_name, mobile_no, last_name="", email_id="", company_name="
                 "folder": "Home/Attachments"
             })
             doc.save(ignore_permissions=True)
-            
-            # Link to custom_attach_bill if we want
             lead.db_set('custom_attach_bill', doc.file_url)
-            
         except Exception as e:
             frappe.log_error(f"Failed to upload document for Lead {lead.name}. Error: {str(e)}", "Partner Portal Lead Document Upload")
 
@@ -238,12 +234,7 @@ def create_lead(first_name, mobile_no, last_name="", email_id="", company_name="
     return lead.name
 
 @frappe.whitelist()
-def update_lead(name, first_name, mobile_no, last_name="", email_id="", company_name="", city="", state="", country="", territory="", industry="", annual_revenue=0, no_of_employees="", 
-                custom_lead_category="", custom_project_type="", custom_capacity="", custom_requirement="", 
-                custom_address="", custom_roof_area=0, custom_roof_type="", 
-                custom_monthly_units=0, custom_monthly_bill=0, 
-                custom_inverter_brand="", custom_panel_brand="", custom_dcr_required=0, custom_subsidy_applicable=0,
-                file_name=None, file_content=None, mime_type=None):
+def update_lead(name, **kwargs):
     partner = get_partner()
     if not partner:
         frappe.throw(_("Not associated with any Channel Partner account."))
@@ -256,33 +247,17 @@ def update_lead(name, first_name, mobile_no, last_name="", email_id="", company_
     if lead.status not in ["Lead", "Open"]:
         frappe.throw(_("You can only edit a lead while it is in 'Lead' or 'Open' status."))
         
-    lead.first_name = first_name
-    lead.last_name = last_name
-    lead.email_id = email_id
-    lead.mobile_no = mobile_no
-    lead.company_name = company_name
-    lead.city = city
-    lead.state = state
-    lead.country = country
-    lead.territory = territory
-    lead.industry = industry
-    lead.annual_revenue = annual_revenue
-    lead.no_of_employees = no_of_employees
+    file_name = kwargs.pop("file_name", None)
+    file_content = kwargs.pop("file_content", None)
+    mime_type = kwargs.pop("mime_type", None)
+    kwargs.pop("cmd", None)
+    kwargs.pop("name", None)
     
-    lead.custom_lead_category = custom_lead_category
-    lead.custom_project_type = custom_project_type
-    lead.custom_capacity = custom_capacity
-    lead.custom_requirement = custom_requirement
-    lead.custom_address = custom_address
-    lead.custom_roof_area = custom_roof_area
-    lead.custom_roof_type = custom_roof_type
-    lead.custom_monthly_units = custom_monthly_units
-    lead.custom_monthly_bill = custom_monthly_bill
-    lead.custom_inverter_brand = custom_inverter_brand
-    lead.custom_panel_brand = custom_panel_brand
-    lead.custom_dcr_required = custom_dcr_required
-    lead.custom_subsidy_applicable = custom_subsidy_applicable
-    
+    for key, value in kwargs.items():
+        if value == "":
+            kwargs[key] = None
+            
+    lead.update(kwargs)
     lead.save(ignore_permissions=True)
     
     if file_content and file_name:
@@ -299,8 +274,91 @@ def update_lead(name, first_name, mobile_no, last_name="", email_id="", company_
                 "folder": "Home/Attachments"
             })
             doc.save(ignore_permissions=True)
+            lead.db_set('custom_attach_bill', doc.file_url)
         except Exception as e:
             frappe.log_error(f"Failed to upload document for Lead {lead.name}. Error: {str(e)}", "Partner Portal Lead Document Upload")
 
     frappe.db.commit()
     return lead.name
+
+@frappe.whitelist()
+def get_user_role():
+    user = frappe.session.user
+    roles = frappe.get_roles(user)
+    if "Channel Partner" in roles:
+        return "Channel Partner"
+    
+    profile = frappe.db.get_value("User", user, "role_profile_name")
+    if profile:
+        return profile
+        
+    return "Employee"
+
+
+@frappe.whitelist()
+def get_partner_quotations(lead_name):
+    partner = get_partner()
+    if not partner:
+        frappe.throw(_("Not associated with any Channel Partner account."))
+        
+    frappe.flags.ignore_permissions = True
+    try:
+        lead = frappe.get_doc("Lead", lead_name)
+        if lead.custom_channel_partner != partner:
+            frappe.throw(_("You don't have permission to read this lead's quotations."))
+            
+        quotations = frappe.get_all("Quotation", filters={"quotation_to": "Lead", "party_name": lead_name}, fields=["name", "grand_total", "status", "transaction_date", "valid_till"])
+        return quotations
+    finally:
+        frappe.flags.ignore_permissions = False
+
+@frappe.whitelist()
+def get_partner_quotation(name):
+    partner = get_partner()
+    if not partner:
+        frappe.throw(_("Not associated with any Channel Partner account."))
+        
+    frappe.flags.ignore_permissions = True
+    try:
+        quotation = frappe.get_doc("Quotation", name)
+        if quotation.quotation_to == "Lead":
+            lead = frappe.get_doc("Lead", quotation.party_name)
+            if lead.custom_channel_partner != partner:
+                frappe.throw(_("You don't have permission to read this quotation."))
+        else:
+            frappe.throw(_("You don't have permission to read this quotation."))
+            
+        return quotation.as_dict()
+    finally:
+        frappe.flags.ignore_permissions = False
+
+@frappe.whitelist()
+def get_partner_print_formats(doc_type):
+    frappe.flags.ignore_permissions = True
+    try:
+        formats = frappe.get_all("Print Format", filters={"doc_type": doc_type}, fields=["name"])
+        return formats
+    finally:
+        frappe.flags.ignore_permissions = False
+
+@frappe.whitelist()
+def download_partner_quotation_pdf(name, format):
+    partner = get_partner()
+    if not partner:
+        frappe.throw(_("Not associated with any Channel Partner account."))
+        
+    frappe.flags.ignore_permissions = True
+    try:
+        quotation = frappe.get_doc("Quotation", name)
+        if quotation.quotation_to == "Lead":
+            lead = frappe.get_doc("Lead", quotation.party_name)
+            if lead.custom_channel_partner != partner:
+                frappe.throw(_("You don't have permission to read this quotation."))
+        
+        from frappe.utils.pdf import get_pdf
+        html = frappe.get_print("Quotation", name, print_format=format)
+        frappe.local.response.filename = f"{name}.pdf"
+        frappe.local.response.filecontent = get_pdf(html)
+        frappe.local.response.type = "pdf"
+    finally:
+        frappe.flags.ignore_permissions = False
