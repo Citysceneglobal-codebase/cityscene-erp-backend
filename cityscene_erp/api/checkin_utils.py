@@ -89,6 +89,18 @@ def upload_selfie(
     )
     file_doc.save(ignore_permissions=True)
 
+    # Update the selfie preview fields on the Employee Checkin form
+    if doctype == "Employee Checkin" and docname:
+        frappe.db.set_value(
+            "Employee Checkin",
+            docname,
+            {
+                "custom_selfie": file_doc.file_url,
+                "selfie": file_doc.file_url,
+            },
+            update_modified=False,
+        )
+
     return file_doc.file_url
 
 
