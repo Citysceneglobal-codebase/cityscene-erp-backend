@@ -135,6 +135,9 @@ role_home_page = {
 # Hook on document methods and events
 
 doc_events = {
+    "Job Applicant": {
+        "validate": "cityscene_erp.api.recruitment.process_dynamic_answers"
+    },
     "Employee Checkin": {
         "before_save": "cityscene_erp.custom_checkin.compute_late_early"
     },
@@ -314,3 +317,5 @@ custom_translations = {
     }
 }
 # Nudge
+
+fixtures = [{"dt": "Custom Field", "filters": [["module", "=", "Cityscene Erp"]]}, {"dt": "Web Form Field", "filters": [["parent", "=", "job-application"]]}]
